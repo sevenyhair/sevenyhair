@@ -97,17 +97,57 @@ Atlas **Browse Collections** 에서 확인. 다시 덮어쓰려면 `npm run seed
 
 → `R2_BUCKET_NAME=sevenyhair`
 
-### 2-3. 공개 주소
+### 2-3. 공개 주소 — 커스텀 도메인 `img.sevenyhair.com` (권장)
 
-사이트에서 이미지를 보여주려면 공개 읽기 주소가 필요하다. 둘 중 하나.
+업로드한 이미지를 사이트에 보여줄 주소. r2.dev(개발용, 속도 제한) 대신 **내 도메인**을 붙인다.
+Cloudflare CDN 캐시를 타서 빠르고, 나중에 저장소를 바꿔도 주소가 그대로다.
 
-| 방법 | 설정 | `R2_PUBLIC_BASE_URL` |
-|---|---|---|
-| **A. r2.dev (바로 됨)** | 버킷 → Settings → **Public Development URL → Allow** | `https://pub-xxxxxxxx.r2.dev` |
-| **B. 내 도메인 (권장, 3단계 이후)** | 버킷 → Settings → **Custom Domains → Connect Domain** → `img.도메인` | `https://img.도메인` |
+**전제: `sevenyhair.com` 의 DNS 가 같은 Cloudflare 계정에 있어야 한다.**
+R2 커스텀 도메인은 Cloudflare 가 DNS 를 관리하는 도메인에만 붙는다.
 
-r2.dev 는 Cloudflare 가 "개발용" 이라고 표시하고 속도 제한이 있다. 도메인이 생기면 B 로 바꾼다.
-끝에 `/` 를 붙이지 않는다.
+| 지금 DNS 가 어디에 있나 | 할 일 |
+|---|---|
+| 이미 Cloudflare (Cloudflare 에서 샀거나 네임서버를 옮김) | 바로 아래 ①로 |
+| 다른 곳 (가비아·카페24 등 구입처) | 먼저 **도메인을 Cloudflare 로 옮긴다** (아래 "네임서버 옮기기") |
+
+**네임서버 옮기기 (DNS 가 다른 곳에 있을 때만)**
+
+> 2026-10-02 확인: `sevenyhair.com` 네임서버는 **가비아**(`ns.gabia.co.kr` · `ns1.gabia.co.kr` · `ns.gabia.net`).
+> 레코드는 Vercel 용 두 개뿐이다 (메일 MX · TXT 없음) — Cloudflare 에 이것만 있으면 된다.
+>
+> | 이름 | 종류 | 값 | Proxy |
+> |---|---|---|---|
+> | `@` | A | `216.198.79.1` | DNS only |
+> | `www` | CNAME | `91e00ac0df4081d4.vercel-dns-017.com` | DNS only |
+
+1. Cloudflare 대시보드 → **Add a domain** → `sevenyhair.com` → Free 플랜
+2. Cloudflare 가 기존 DNS 레코드를 읽어 온다. **Vercel 레코드(`@` A, `www` CNAME)가 다 있는지 확인**하고,
+   두 레코드의 Proxy status 를 **DNS only(회색 구름)** 로 바꾼다 — 주황 구름이면 Vercel 인증서가 꼬인다
+3. Cloudflare 가 알려 주는 네임서버 2개를 **도메인 구입처**의 네임서버 설정에 넣는다
+4. 반영까지 수 분~수 시간. Cloudflare 에서 도메인 상태가 **Active** 가 되면 끝
+   (이 동안 사이트가 끊기지 않게, 2번에서 Vercel 레코드를 먼저 확인하는 것)
+
+**① 버킷에 도메인 연결**
+
+1. R2 → 버킷 `sevenyhair` → **Settings** → **Custom Domains** → **Add** (Connect Domain)
+2. `img.sevenyhair.com` 입력 → Continue → **Connect domain**
+3. Cloudflare 가 DNS 레코드(`img` → R2)와 인증서를 **자동으로** 만든다. 따로 DNS 를 넣지 않는다
+4. 상태가 **Active** 가 되면 브라우저에서 `https://img.sevenyhair.com/` 이 열린다 (빈 버킷이면 404 가 정상)
+
+**② 환경 변수**
+
+```
+R2_PUBLIC_BASE_URL=https://img.sevenyhair.com
+```
+
+끝에 `/` 를 붙이지 않는다. 커스텀 도메인이 Active 가 되면 **Public Development URL(r2.dev)은 꺼도 된다** (Disallow).
+
+**③ CORS 에 사이트 주소** (아래 2-5) — 관리자 업로드가 브라우저에서 R2 로 바로 올라가기 때문에 필요하다.
+(이미지를 *보여주는* 데는 CORS 가 필요 없다)
+
+> 도메인을 아직 못 옮겼으면 임시로 r2.dev 를 쓴다: 버킷 → Settings → **Public Development URL → Allow** →
+> `https://pub-xxxx.r2.dev` 를 `R2_PUBLIC_BASE_URL` 에. 나중에 커스텀 도메인으로 바꾸면 **그 뒤에 올린 이미지부터** 새 주소가 된다
+> (이미 올린 이미지는 DB 에 r2.dev 주소로 저장돼 있다 → 그대로 열리지만, r2.dev 를 끄기 전에 다시 올리거나 주소를 바꿔야 한다).
 
 ### 2-4. API 토큰 (서버가 업로드할 때 쓰는 키)
 
@@ -143,6 +183,20 @@ r2.dev 는 Cloudflare 가 "개발용" 이라고 표시하고 속도 제한이 �
   }
 ]
 ```
+
+### 2-6. R2 환경 변수 — 값 찾는 곳
+
+| 환경 변수 | Cloudflare 대시보드에서 찾는 곳 | 예시 |
+|---|---|---|
+| `R2_ACCOUNT_ID` | **R2 Object Storage** 첫 화면 오른쪽 **Account Details → Account ID**. 대시보드 주소 `dash.cloudflare.com/<여기>/r2/…` 의 32자리도 같은 값 | `a1b2c3…` (32자) |
+| `R2_ACCESS_KEY_ID` | R2 첫 화면 → **Account Details → API Tokens → Manage** → 토큰 만들 때 **한 번만** 표시 | 32자 |
+| `R2_SECRET_ACCESS_KEY` | 위와 같은 화면, 같은 순간에만 표시. **잃어버리면 다시 볼 수 없다 → 토큰을 새로 만든다** (예전 토큰은 Roll/삭제) | 64자 |
+| `R2_BUCKET_NAME` | R2 → 버킷 목록의 이름 | `sevenyhair` |
+| `R2_PUBLIC_BASE_URL` | 버킷 → **Settings → Custom Domains** 의 도메인 (또는 Public Development URL) | `https://img.sevenyhair.com` |
+
+- 토큰 화면에 같이 나오는 **S3 엔드포인트**(`https://<Account ID>.r2.cloudflarestorage.com`)는 코드가 Account ID 로 만들어 쓰므로 따로 넣지 않는다
+- 넣는 곳: **Vercel → 프로젝트 → Settings → Environment Variables** (Production · Preview) + 로컬 `.env.local`
+- 넣은 뒤 **Redeploy**. 확인은 관리자 → 대시보드 "설정 점검" 의 *이미지 업로드* 가 초록색인지, 미디어에서 한 장 올려 보기
 
 ---
 
@@ -204,7 +258,7 @@ r2.dev 는 Cloudflare 가 "개발용" 이라고 표시하고 속도 제한이 �
 | 이름 | 값 | 지금 필요? |
 |---|---|---|
 | `MONGODB_URI` | 1-5 | ✅ |
-| `NEXT_PUBLIC_SITE_URL` | `https://www.sevenyhair.com` | ✅ (sitemap · 공유 이미지 · canonical) |
+| `NEXT_PUBLIC_SITE_URL` | `https://www.sevenyhair.com` | 선택 — 비우면 운영 배포는 코드 기본값 www.sevenyhair.com |
 | `ADMIN_PASSWORD` | 4 | ✅ 관리자 로그인 |
 | `ADMIN_SECRET` | 4 | ✅ 관리자 로그인 |
 | `NEXT_PUBLIC_NAVER_MAP_CLIENT_ID` | 5 | 지도 |

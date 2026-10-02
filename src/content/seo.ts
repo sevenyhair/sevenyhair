@@ -78,14 +78,19 @@ export const ROUTES: Record<string, RouteSeo> = {
   },
 };
 
+/** 운영 도메인 (2026-10-02 연결) */
+export const PRODUCTION_URL = "https://www.sevenyhair.com";
+
 /**
- * 사이트 주소. NEXT_PUBLIC_SITE_URL(정식 도메인)을 먼저 쓰고,
- * 없으면 Vercel 이 주는 운영 주소, 그것도 없으면 로컬.
+ * 사이트 주소 — sitemap · 공유 이미지 · canonical 이 쓴다.
+ * NEXT_PUBLIC_SITE_URL 이 있으면 그 값, 운영 배포면 www.sevenyhair.com,
+ * 미리보기 배포면 그 배포 주소, 로컬이면 localhost.
  */
 export function siteUrl(): string {
   const explicit = process.env.NEXT_PUBLIC_SITE_URL?.trim();
   if (explicit) return explicit.replace(/\/$/, "");
-  const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim();
+  if (process.env.VERCEL_ENV === "production") return PRODUCTION_URL;
+  const vercel = process.env.VERCEL_URL?.trim();
   if (vercel) return `https://${vercel}`;
   return "http://localhost:3040";
 }
