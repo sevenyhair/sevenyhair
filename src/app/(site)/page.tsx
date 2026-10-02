@@ -14,7 +14,9 @@ import type { Metadata } from "next";
 import { routeMetadata } from "@/lib/seo";
 import { getInstagram, getPage, getShop, getTestimonials } from "@/lib/queries";
 
-export const metadata: Metadata = routeMetadata("home");
+export async function generateMetadata(): Promise<Metadata> {
+  return routeMetadata("home");
+}
 
 export default async function HomePage() {
   const [shop, page, testimonials, feed] = await Promise.all([

@@ -96,3 +96,64 @@ const InstagramSchema = new Schema(
 );
 
 export const InstagramModel = model("Instagram", InstagramSchema, COLLECTIONS.instagram);
+
+/** 스타일북 — 네이버 플레이스 스타일 정보에서 시작, 어드민에서 추가·수정 */
+const StyleSchema = new Schema(
+  {
+    num: { type: String, required: true, unique: true },
+    title: { type: String, required: true },
+    category: String,
+    titleEn: String,
+    gender: { type: String, enum: ["f", "m"], default: "f" },
+    images: [Schema.Types.Mixed],
+    order: { type: Number, default: 0 },
+    hidden: { type: Boolean, default: false },
+  },
+  opts,
+);
+
+/** 라우트별 SEO 덮어쓰기 — 비어 있는 값은 src/content/seo.ts 기본값을 쓴다 */
+const SeoSchema = new Schema(
+  {
+    route: { type: String, required: true, unique: true },
+    title: String,
+    description: String,
+    ogTitle: String,
+    ogSubtitle: String,
+    ogImage: String,
+  },
+  opts,
+);
+
+/** 커스텀 페이지 — /p/[slug] */
+const CustomPageSchema = new Schema(
+  {
+    slug: { type: String, required: true, unique: true },
+    title: { type: String, required: true },
+    heroImage: String,
+    html: String,
+    published: { type: Boolean, default: false },
+    seo: Schema.Types.Mixed, // { title, description, ogImage }
+  },
+  opts,
+);
+
+/** 업로드한 이미지 (R2) */
+const MediaSchema = new Schema(
+  {
+    key: { type: String, required: true, unique: true },
+    url: { type: String, required: true },
+    name: String,
+    type: String,
+    size: Number,
+    width: Number,
+    height: Number,
+    alt: String,
+  },
+  opts,
+);
+
+export const StyleModel = model("Style", StyleSchema, COLLECTIONS.styles);
+export const SeoModel = model("Seo", SeoSchema, COLLECTIONS.seo);
+export const CustomPageModel = model("CustomPage", CustomPageSchema, COLLECTIONS.customPages);
+export const MediaModel = model("Media", MediaSchema, COLLECTIONS.media);

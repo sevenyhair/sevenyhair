@@ -7,4 +7,8 @@ export const COLLECTIONS = {
   staff: "staff",
   posts: "posts",
   instagram: "instagram",
+  styles: "styles",
+  seo: "seo",
+  customPages: "custompages",
+  media: "media",
 } as const;

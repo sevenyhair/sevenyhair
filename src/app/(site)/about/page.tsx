@@ -6,7 +6,9 @@ import { routeMetadata } from "@/lib/seo";
 import { getPage, getShop, getStaff } from "@/lib/queries";
 import type { Staff } from "@/lib/types";
 
-export const metadata: Metadata = routeMetadata("about");
+export async function generateMetadata(): Promise<Metadata> {
+  return routeMetadata("about");
+}
 
 function PersonText({ p }: { p: Staff }) {
   return (

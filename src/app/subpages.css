@@ -480,3 +480,43 @@
 .journal-more { display: flex; justify-content: center; margin-top: 80px; }
 
 .imprint-grid { grid-template-columns: 140px 1fr; margin-top: 20px; }
+
+/* Contact — 네이버 지도 */
+.map-section { padding-top: 100px; }
+.map-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 40px; margin-bottom: 40px; padding: 0 15px; }
+.map-head .heading { margin-bottom: 0; }
+.map-info .paragraph { margin-bottom: 8px; }
+.map-transit { color: var(--dark-grey); font-size: 14px; }
+.naver-map { position: relative; margin: 0 15px; }
+.naver-map-canvas { width: 100%; background: #eee; filter: grayscale(0.35) contrast(1.02); }
+.naver-map-link { position: absolute; left: 16px; bottom: 16px; z-index: 2; background: #fff; }
+.naver-map[data-status="failed"] .naver-map-link { position: static; display: inline-block; }
+@media screen and (max-width: 767px) {
+  .map-section { padding-top: 64px; }
+  .map-head { flex-direction: column; align-items: flex-start; gap: 16px; padding: 0 8px; }
+  .naver-map { margin: 0 8px; }
+  .naver-map-canvas { height: 360px !important; }
+}
+
+/* 커스텀 페이지 (/p/[slug]) — 어드민 에디터 본문을 사이트 서체로 */
+.custom-page-head { padding-bottom: 0; }
+.custom-page-head .heading { text-align: center; }
+.custom-page .wrapper { max-width: 760px; }
+.rich-text { color: #000; font-family: var(--futura); font-size: 16px; font-weight: 300; line-height: 1.8; }
+.rich-text > * + * { margin-top: 1.1em; }
+.rich-text p { margin: 0; font-size: 16px; line-height: 1.8; }
+.rich-text h1, .rich-text h2 { margin: 1.6em 0 0.4em; font-family: var(--bodoni); font-weight: 400; font-size: 32px; line-height: 1.3; }
+.rich-text h3 { margin: 1.4em 0 0.3em; font-family: var(--bodoni); font-weight: 400; font-size: 24px; line-height: 1.35; }
+.rich-text a { color: var(--black); text-decoration: none; box-shadow: 0 1px 0 0 currentColor; }
+.rich-text strong { font-weight: 600; }
+.rich-text ul, .rich-text ol { padding-left: 1.3em; }
+.rich-text li + li { margin-top: 0.3em; }
+.rich-text blockquote { margin: 1.4em 0; padding: 4px 0 4px 20px; border-left: 2px solid var(--black); font-family: var(--bodoni); font-size: 20px; }
+.rich-text img { display: block; width: 100%; height: auto; }
+.rich-text figure { margin: 1.6em 0; }
+.rich-text figcaption { margin-top: 8px; color: var(--dark-grey); font-size: 13px; }
+.rich-text hr { border: 0; border-top: 1px solid var(--gainsboro); margin: 2.4em 0; }
+.rich-text table { width: 100%; border-collapse: collapse; }
+.rich-text th, .rich-text td { padding: 10px 0; border-bottom: 1px solid var(--gainsboro); text-align: left; }
+.rich-text iframe { width: 100%; aspect-ratio: 16 / 9; height: auto; border: 0; }
+.rich-text [style*="text-align: center"] { text-align: center; }

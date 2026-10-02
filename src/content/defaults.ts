@@ -39,6 +39,8 @@ export const shop = {
   bookingUrl: LINKS.booking,
   naverPlaceUrl: LINKS.naverPlace,
   logos: { vertical: "", horizontal: "", hero: "", preloader: "" },
+  // 네이버 플레이스 좌표 (충렬사로 38)
+  map: { lat: 35.2024218, lng: 129.0979297, zoom: 17 },
   hours: [
     { days: "월", lines: ["10:00  –  20:00"] },
     { days: "화", lines: ["정기 휴무"] },

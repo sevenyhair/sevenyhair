@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { ROUTES } from "@/content/seo";
+import { resolveRouteSeo, type RouteKey } from "./seo";
 
 /**
  * 라우트별 공유 이미지 (1200×630). 매장 사진 + 어두운 그라데이션 + SEVENY 로고 테두리 + 제목.
@@ -23,8 +23,13 @@ async function googleFont(family: string, weight: number, text: string): Promise
   }
 }
 
-export async function renderOg(key: keyof typeof ROUTES) {
-  const { og } = ROUTES[key];
+export async function renderOg(key: RouteKey) {
+  const { og } = await resolveRouteSeo(key);
+  return renderOgImage(og);
+}
+
+/** 문구·사진을 직접 받아 그린다 — 커스텀 페이지(/p/[slug])도 쓴다 */
+export async function renderOgImage(og: { title: string; subtitle: string; image: string }) {
   const latin = `SEVNY${og.title}SEVENY HAIR`;
   const [bodoni, kr, sans] = await Promise.all([
     googleFont("Bodoni+Moda", 400, latin),

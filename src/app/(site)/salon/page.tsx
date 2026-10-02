@@ -9,7 +9,9 @@ import { gallery } from "@/content/pages";
 import { routeMetadata } from "@/lib/seo";
 import { getPage, getShop } from "@/lib/queries";
 
-export const metadata: Metadata = routeMetadata("salon");
+export async function generateMetadata(): Promise<Metadata> {
+  return routeMetadata("salon");
+}
 
 function Paragraphs({ items }: { items?: string[] }) {
   return (

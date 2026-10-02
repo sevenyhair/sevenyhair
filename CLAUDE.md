@@ -33,8 +33,19 @@ npm run ig -- list | add <url> [title] | pin <code> | hide <code> | remove <code
 | `src/app/api/ig/[code]` | 인스타 이미지 프록시 — CDN 이 CORP same-origin 이라 직접 링크 불가 |
 | `src/components/Logo.tsx` | SEV/ENY/HAIR. 로고 (인라인 SVG, S 가 테두리에 잘림) |
 | `src/lib/queries.ts` | DB 먼저, 실패·빈 값이면 기본 콘텐츠 (실패는 `[db]` 로그) |
+| `src/app/(site)/` | 공개 페이지 (라우트 그룹 — 사이트 CSS·장식은 여기 레이아웃에만) |
+| `src/app/admin/` | 관리자. `(panel)` 은 로그인 후 화면, `login` 은 밖 |
+| `src/middleware.ts` · `src/lib/admin/session.ts` | `/admin` · `/api/admin` 보호. 토큰 = payload(iat·exp) + HMAC (Web Crypto) |
+| `src/lib/admin/actions.ts` | 모든 저장(서버 액션). 시작마다 `requireAdmin()` |
+| `src/lib/r2.ts` · `api/admin/upload/sign` | R2 사전 서명 직접 업로드 (체크섬 WHEN_REQUIRED · 리사이즈 후 크기로 서명) |
+| `src/components/NaverMap.tsx` | 네이버 지도 (NCP `ncpKeyId`) — Contact 의 Location |
 
 ## 규칙
+
+- **사이트 CSS 는 `(site)/layout.tsx` 에서만 불러온다.** 루트에 두면 h1·p·a 기본 스타일이 관리자 화면을 망가뜨린다.
+- 관리자 화면은 Tailwind + `admin.css`(`.admin-root` 안에서만 초기화). 아이콘은 lucide-react — 브랜드 아이콘(Instagram)은 없어서 `Icons.tsx` 것을 쓴다.
+- 매장 정보(`getShop`)는 DB 값 위에 기본값을 깔아 반환한다 — 나중에 추가한 필드(map 등)가 옛 DB 문서에 없어도 동작.
+- 관리자 저장은 운영 DB 에 바로 쓴다. 로컬에서 시험할 땐 비공개 커스텀 페이지처럼 사이트에 안 보이는 것으로 하고 지운다.
 
 - **DB 이름은 코드 상수 `seveny`** (`src/lib/mongodb.ts`). 환경 변수로 받지 않는다.
 - `MONGODB_URI` 는 고객의 새 Atlas 로 옮기는 중이다 (`docs/setup-infra.md`). 로컬 `.env.local` 은 아직 myjane 클러스터 값일 수 있다.

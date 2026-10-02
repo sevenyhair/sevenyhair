@@ -8,10 +8,12 @@
 | 1. MongoDB Atlas | 이메일 계정 | `MONGODB_URI` |
 | 2. Cloudflare R2 (이미지 저장소) | Cloudflare 계정 + 결제수단 등록 | `R2_*` 5개 |
 | 3. 도메인 (선택) | 도메인 | `NEXT_PUBLIC_SITE_URL` |
-| 4. Vercel | 위 값들 | 재배포 |
+| 4. 관리자 로그인 | — | `ADMIN_PASSWORD` · `ADMIN_SECRET` |
+| 5. 네이버 지도 | 네이버 클라우드 플랫폼 계정 + 결제수단 | `NEXT_PUBLIC_NAVER_MAP_CLIENT_ID` |
+| 6. Vercel | 위 값들 | 재배포 |
 
 > 지금 사이트는 `MONGODB_URI` 가 없어도 동작한다 (코드에 들어 있는 기본 콘텐츠로 그린다).
-> R2 는 **이미지 업로드 기능(어드민)을 붙일 때** 쓴다. 키만 미리 만들어 두면 된다.
+> R2 는 관리자 화면의 이미지 업로드에 쓴다. 설정 전에는 이미지 주소 붙여넣기로 대신할 수 있다.
 
 ---
 
@@ -127,13 +129,13 @@ r2.dev 는 Cloudflare 가 "개발용" 이라고 표시하고 속도 제한이 �
 
 ### 2-5. CORS (브라우저에서 R2 로 직접 올릴 때만)
 
-어드민 이미지 업로드를 Ignite 처럼 **사전 서명 직접 업로드**로 만들면 필요하다.
+관리자 이미지 업로드는 브라우저가 R2 로 **직접** 올린다(사전 서명 URL). 그래서 **반드시 필요하다.**
 버킷 → Settings → **CORS Policy → Add**:
 
 ```json
 [
   {
-    "AllowedOrigins": ["http://localhost:3040", "https://<운영 도메인>", "https://<프로젝트>.vercel.app"],
+    "AllowedOrigins": ["http://localhost:3040", "https://www.sevenyhair.com", "https://sevenyhair.com"],
     "AllowedMethods": ["PUT", "GET", "HEAD"],
     "AllowedHeaders": ["*"],
     "ExposeHeaders": ["ETag"],
@@ -157,15 +159,56 @@ r2.dev 는 Cloudflare 가 "개발용" 이라고 표시하고 속도 제한이 �
 
 ---
 
-## 4. Vercel 환경 변수
+## 4. 관리자 로그인 (/admin)
+
+1. 비밀번호를 정한다 — 12자 이상, 다른 곳에서 쓰지 않는 것
+2. 서명용 비밀값을 만든다 (32바이트 무작위):
+   ```bash
+   node -e "console.log(require(crypto).randomBytes(32).toString(hex))"
+   ```
+3. Vercel 에 `ADMIN_PASSWORD` · `ADMIN_SECRET` 으로 넣고 재배포 → `https://도메인/admin`
+
+- 로그인은 7일 유지된다. **`ADMIN_SECRET` 을 바꾸면 모든 기기에서 로그아웃**된다 (비밀번호가 새었을 때 쓰는 방법)
+- 둘 중 하나라도 비면 로그인 화면에 무엇이 빠졌는지 표시된다
+
+---
+
+## 5. 네이버 지도 — 네이버 클라우드 플랫폼(NCP)
+
+> 네이버 **디벨로퍼스(developers.naver.com)가 아니다.** 지도 API 는 2020년부터 **네이버 클라우드 플랫폼** 으로 옮겨졌다.
+> 코드는 신규 키 방식(`ncpKeyId`)을 쓴다.
+
+1. https://www.ncloud.com 가입 → 콘솔 로그인 → **결제수단 등록** (무료 이용량이 있고, 그 안에서는 청구되지 않는다. 요금은 콘솔 Maps 요금 안내에서 확인)
+2. 콘솔 → **Services → Application Services → Maps** → **Application 등록**
+   - Application 이름: `sevenyhair`
+   - Service 선택: **Dynamic Map** 체크 (지도 표시용. 나머지는 필요 없다)
+   - **서비스 환경 등록 → Web 서비스 URL** 에 아래를 모두 넣는다 (여기 없는 주소에서는 지도가 인증 실패로 안 뜬다)
+     ```
+     https://www.sevenyhair.com
+     https://sevenyhair.com
+     http://localhost:3040
+     ```
+     Vercel 미리보기 주소(`*.vercel.app`)에서도 보려면 그 주소도 추가
+3. 등록한 Application → **인증 정보** → **Client ID** 복사 → `NEXT_PUBLIC_NAVER_MAP_CLIENT_ID`
+4. Vercel 에 넣고 **재배포** (`NEXT_PUBLIC_` 값은 빌드 때 들어간다)
+
+- 지도는 Contact 페이지 아래 **Location** 섹션에 나온다. 좌표·확대 수준은 **관리자 → 매장 정보 → 주소·지도** 에서 바꾼다
+- 키가 없거나 인증에 실패하면 지도 대신 "네이버 지도에서 보기" 링크만 보인다 (사이트가 깨지지 않는다)
+
+---
+
+## 6. Vercel 환경 변수
 
 **Vercel → 프로젝트 → Settings → Environment Variables** (Production · Preview 둘 다 체크)
 
 | 이름 | 값 | 지금 필요? |
 |---|---|---|
 | `MONGODB_URI` | 1-5 | ✅ |
-| `NEXT_PUBLIC_SITE_URL` | `https://도메인` | 도메인 연결 후 (없으면 Vercel 운영 주소를 자동으로 쓴다) |
-| `R2_ACCOUNT_ID` | 2-1 | 이미지 업로드 기능 때 |
+| `NEXT_PUBLIC_SITE_URL` | `https://www.sevenyhair.com` | ✅ (sitemap · 공유 이미지 · canonical) |
+| `ADMIN_PASSWORD` | 4 | ✅ 관리자 로그인 |
+| `ADMIN_SECRET` | 4 | ✅ 관리자 로그인 |
+| `NEXT_PUBLIC_NAVER_MAP_CLIENT_ID` | 5 | 지도 |
+| `R2_ACCOUNT_ID` | 2-1 | 관리자 이미지 업로드 |
 | `R2_ACCESS_KEY_ID` | 2-4 | 〃 |
 | `R2_SECRET_ACCESS_KEY` | 2-4 | 〃 |
 | `R2_BUCKET_NAME` | `sevenyhair` | 〃 |
@@ -178,10 +221,13 @@ r2.dev 는 Cloudflare 가 "개발용" 이라고 표시하고 속도 제한이 �
 
 ---
 
-## 5. 끝나고 확인
+## 7. 끝나고 확인
 
 - [ ] Atlas Browse Collections 에 `seveny` DB 와 컬렉션 6개
 - [ ] 운영 사이트 홈·Services 가 정상 (DB 에서 읽는다)
 - [ ] Vercel → Logs 에 `[db]` 실패 줄이 없다
 - [ ] (도메인) `https://도메인/sitemap.xml` 의 주소가 도메인으로 나온다
-- [ ] (R2) 버킷에 테스트 파일을 올리고 `R2_PUBLIC_BASE_URL/파일명` 이 열린다
+- [ ] (R2) 관리자 → 미디어 에서 이미지를 올려 보고, 그 주소가 열린다
+- [ ] (R2 CORS) 업로드가 "R2 업로드 실패" 로 끝나면 2-5 의 CORS 에 `https://www.sevenyhair.com` 이 있는지
+- [ ] `/admin` 로그인 → 대시보드 "설정 점검" 이 전부 초록색
+- [ ] Contact 페이지 아래 지도가 뜬다

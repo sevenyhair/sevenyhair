@@ -45,6 +45,8 @@ export type Shop = {
     hero: string; // 히어로 흰색 로고
     preloader: string;
   };
+  /** 네이버 지도 — 좌표·확대 수준 (어드민에서 수정) */
+  map?: { lat: number; lng: number; zoom: number };
   hours: OpeningHour[];
   payments: { label: string; icon: string }[];
   paymentNote: string;
@@ -119,4 +121,37 @@ export type Post = {
   body: string; // HTML
   category?: string;
   publishedAt: string; // ISO
+};
+
+export type SeoOverride = {
+  route: string;
+  title?: string;
+  description?: string;
+  ogTitle?: string;
+  ogSubtitle?: string;
+  ogImage?: string;
+};
+
+export type CustomPage = {
+  _id?: string;
+  slug: string;
+  title: string;
+  heroImage?: string;
+  html: string;
+  published: boolean;
+  seo?: { title?: string; description?: string; ogImage?: string };
+  updatedAt?: string;
+};
+
+export type MediaItem = {
+  _id?: string;
+  key: string;
+  url: string;
+  name?: string;
+  type?: string;
+  size?: number;
+  width?: number;
+  height?: number;
+  alt?: string;
+  createdAt?: string;
 };

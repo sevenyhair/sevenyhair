@@ -1,0 +1,251 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { igPermalink } from "@/content/instagram";
+import type { Style } from "@/content/styles";
+import {
+  CustomPageModel,
+  InstagramModel,
+  MediaModel,
+  PageModel,
+  SeoModel,
+  ServiceModel,
+  ShopModel,
+  StaffModel,
+  StyleModel,
+  TestimonialModel,
+} from "../models";
+import { connectDB } from "../mongodb";
+import { deleteObject, readR2Config } from "../r2";
+import { sanitizeRichHtml } from "../sanitize";
+import type { CustomPage, MediaItem, Page, SeoOverride, Service, Shop, Staff, Testimonial } from "../types";
+import { requireAdmin } from "./guard";
+import { ADMIN_COOKIE, createSessionToken, passwordMatches, SESSION_DAYS } from "./session";
+
+/*
+ * 어드민 저장 — 모든 함수가 requireAdmin() 으로 시작한다 (middleware 와 이중 확인).
+ * 공개 페이지는 force-dynamic 이라 저장 즉시 반영되지만, 라우트 캐시를 위해 revalidatePath 도 부른다.
+ */
+export type ActionResult<T = undefined> = { ok: true; data?: T } | { ok: false; error: string };
+
+async function run<T>(label: string, fn: () => Promise<T>): Promise<ActionResult<T>> {
+  try {
+    await requireAdmin();
+    if (!process.env.MONGODB_URI) return { ok: false, error: "MONGODB_URI 가 설정되지 않아 저장할 수 없습니다." };
+    await connectDB();
+    const data = await fn();
+    revalidatePath("/", "layout");
+    return { ok: true, data };
+  } catch (err) {
+    console.error(`[admin] ${label} 실패`, err);
+    const msg = err instanceof Error ? err.message : "알 수 없는 오류";
+    if (/E11000/.test(msg)) return { ok: false, error: "이미 사용 중인 값입니다 (주소·코드 중복)." };
+    return { ok: false, error: msg };
+  }
+}
+
+const str = (v: unknown, max = 5000) => (typeof v === "string" ? v.slice(0, max) : "");
+const strip = <T extends object>(doc: T) => {
+  const { _id, __v, createdAt, updatedAt, ...rest } = doc as Record<string, unknown>;
+  void _id; void __v; void createdAt; void updatedAt;
+  return rest as T;
+};
+
+/* ───────── 로그인 ───────── */
+
+export async function loginAction(_prev: { error?: string } | undefined, form: FormData) {
+  const password = String(form.get("password") ?? "");
+  const next = String(form.get("next") ?? "/admin");
+  if (!(await passwordMatches(password))) {
+    await new Promise((r) => setTimeout(r, 600)); // 무차별 대입을 늦춘다
+    return { error: "비밀번호가 맞지 않습니다." };
+  }
+  const token = await createSessionToken();
+  if (!token) return { error: "ADMIN_SECRET 이 설정되지 않았습니다 (16자 이상)." };
+  (await cookies()).set(ADMIN_COOKIE, token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: SESSION_DAYS * 24 * 60 * 60,
+  });
+  redirect(next.startsWith("/admin") ? next : "/admin");
+}
+
+export async function logoutAction() {
+  (await cookies()).delete(ADMIN_COOKIE);
+  redirect("/admin/login");
+}
+
+/* ───────── 매장 정보 · 페이지 문구 ───────── */
+
+export async function saveShop(shop: Shop) {
+  return run("saveShop", async () => {
+    const clean = strip(shop);
+    if (clean.map) {
+      const { lat, lng, zoom } = clean.map;
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) throw new Error("지도 좌표가 숫자가 아닙니다.");
+      clean.map = { lat, lng, zoom: Math.min(21, Math.max(6, Math.round(zoom || 17))) };
+    }
+    await ShopModel.replaceOne({ key: "main" }, { key: "main", ...clean }, { upsert: true });
+  });
+}
+
+export async function savePage(page: Page) {
+  return run(`savePage(${page.slug})`, async () => {
+    if (!page.slug) throw new Error("페이지 slug 가 없습니다.");
+    await PageModel.replaceOne({ slug: page.slug }, strip(page), { upsert: true });
+  });
+}
+
+/* ───────── 목록형 (통째로 교체) ───────── */
+
+async function replaceAll<T extends object>(model: typeof ServiceModel, rows: T[]) {
+  await model.deleteMany({});
+  if (rows.length) await model.insertMany(rows.map((r, i) => ({ ...strip(r), order: i + 1 })));
+}
+
+export async function saveServices(tables: Service[]) {
+  return run("saveServices", () => replaceAll(ServiceModel, tables.map((t) => ({ ...t, published: true }))));
+}
+
+export async function saveTestimonials(items: Testimonial[]) {
+  return run("saveTestimonials", () => replaceAll(TestimonialModel, items.map((t) => ({ ...t, published: true }))));
+}
+
+export async function saveStaff(items: Staff[]) {
+  return run("saveStaff", () => replaceAll(StaffModel, items));
+}
+
+export async function saveStyles(items: Style[]) {
+  return run("saveStyles", async () => {
+    const seen = new Set<string>();
+    for (const s of items) {
+      if (!s.num) s.num = `s${Date.now()}${Math.random().toString(36).slice(2, 6)}`;
+      if (seen.has(s.num)) throw new Error(`스타일 번호 중복: ${s.num}`);
+      seen.add(s.num);
+    }
+    await replaceAll(StyleModel, items);
+  });
+}
+
+/* ───────── 인스타그램 ───────── */
+
+type IgRow = { code: string; type: "reel" | "post"; title: string; caption?: string; pinned?: boolean; hidden?: boolean };
+
+export async function saveInstagram(items: IgRow[]) {
+  return run("saveInstagram", async () => {
+    const now = Date.now();
+    await InstagramModel.deleteMany({});
+    if (items.length) {
+      await InstagramModel.insertMany(
+        items.map((it, i) => ({
+          code: it.code,
+          type: it.type,
+          title: str(it.title, 200),
+          caption: str(it.caption, 500),
+          pinned: !!it.pinned,
+          hidden: !!it.hidden,
+          order: i + 1,
+          takenAt: new Date(now - i * 60000),
+          source: "manual",
+        })),
+      );
+    }
+  });
+}
+
+/** 인스타 링크 → 코드. 화면에서 미리보기 전에 형식만 확인한다 */
+export async function parseInstagramLink(url: string): Promise<ActionResult<IgRow>> {
+  await requireAdmin();
+  const m = url.match(/instagram\.com\/(?:[^/]+\/)?(p|reel|reels|tv)\/([A-Za-z0-9_-]+)/);
+  if (!m) return { ok: false, error: "인스타그램 게시물 링크가 아닙니다. (예: https://www.instagram.com/reel/XXXX/)" };
+  const row: IgRow = { code: m[2], type: m[1] === "p" ? "post" : "reel", title: "" };
+  return { ok: true, data: { ...row, caption: igPermalink(row) } };
+}
+
+/* ───────── SEO ───────── */
+
+export async function saveSeo(o: SeoOverride) {
+  return run(`saveSeo(${o.route})`, async () => {
+    const doc = {
+      route: o.route,
+      title: str(o.title, 120),
+      description: str(o.description, 300),
+      ogTitle: str(o.ogTitle, 60),
+      ogSubtitle: str(o.ogSubtitle, 60),
+      ogImage: str(o.ogImage, 500),
+    };
+    await SeoModel.replaceOne({ route: o.route }, doc, { upsert: true });
+  });
+}
+
+/* ───────── 커스텀 페이지 ───────── */
+
+const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const RESERVED = new Set(["admin", "api", "services", "salon", "about", "journal", "contact", "imprint", "post", "p"]);
+
+export async function saveCustomPage(page: CustomPage & { _id?: string }) {
+  return run("saveCustomPage", async () => {
+    const slug = page.slug.trim().toLowerCase();
+    if (!SLUG_RE.test(slug)) throw new Error("주소는 영문 소문자·숫자·하이픈(-)만 쓸 수 있습니다.");
+    if (RESERVED.has(slug)) throw new Error(`"${slug}" 는 사이트에서 쓰는 주소라 사용할 수 없습니다.`);
+    if (!page.title.trim()) throw new Error("제목을 입력하세요.");
+    const doc = {
+      slug,
+      title: str(page.title, 120).trim(),
+      heroImage: str(page.heroImage, 500),
+      html: sanitizeRichHtml(str(page.html, 200_000)),
+      published: !!page.published,
+      seo: {
+        title: str(page.seo?.title, 120),
+        description: str(page.seo?.description, 300),
+        ogImage: str(page.seo?.ogImage, 500),
+      },
+    };
+    if (page._id) {
+      await CustomPageModel.updateOne({ _id: page._id }, { $set: doc });
+      return { id: page._id };
+    }
+    const created = await CustomPageModel.create(doc);
+    return { id: String(created._id) };
+  });
+}
+
+export async function deleteCustomPage(id: string) {
+  return run("deleteCustomPage", async () => {
+    await CustomPageModel.deleteOne({ _id: id });
+  });
+}
+
+/* ───────── 미디어 ───────── */
+
+/** 이미지 고르기 창이 부른다 */
+export async function listMedia(): Promise<ActionResult<MediaItem[]>> {
+  return run("listMedia", async () => JSON.parse(JSON.stringify(await MediaModel.find().sort({ createdAt: -1 }).limit(300).lean())) as MediaItem[]);
+}
+
+export async function registerMedia(item: MediaItem) {
+  return run("registerMedia", async () => {
+    const doc = await MediaModel.create({ ...strip(item), name: str(item.name, 200) });
+    return JSON.parse(JSON.stringify(doc)) as MediaItem;
+  });
+}
+
+export async function updateMediaAlt(id: string, alt: string) {
+  return run("updateMediaAlt", async () => {
+    await MediaModel.updateOne({ _id: id }, { $set: { alt: str(alt, 200) } });
+  });
+}
+
+export async function deleteMedia(id: string) {
+  return run("deleteMedia", async () => {
+    const doc = (await MediaModel.findById(id).lean()) as { key?: string } | null;
+    if (!doc) return;
+    const r2 = readR2Config();
+    if (r2 && doc.key) await deleteObject(r2, doc.key);
+    await MediaModel.deleteOne({ _id: id });
+  });
+}

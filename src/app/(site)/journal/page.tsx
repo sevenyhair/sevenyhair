@@ -7,7 +7,9 @@ import { LINKS } from "@/content/defaults";
 import { getInstagram, getPage, getShop } from "@/lib/queries";
 import { routeMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = routeMetadata("journal");
+export async function generateMetadata(): Promise<Metadata> {
+  return routeMetadata("journal");
+}
 
 /** 원본 Blog 자리 — @seveny.hair 인스타그램 피드 */
 export default async function JournalPage() {

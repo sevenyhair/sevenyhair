@@ -10,6 +10,7 @@ import mongoose from "mongoose";
 import { homePage, shop, testimonials } from "../src/content/defaults.ts";
 import { pages, posts, services, staff } from "../src/content/pages.ts";
 import { instagram } from "../src/content/instagram.ts";
+import { styles } from "../src/content/styles.ts";
 
 const DB = "seveny"; // src/lib/mongodb.ts 의 MONGODB_DB 와 같아야 한다
 const force = process.argv.includes("--force");
@@ -32,6 +33,7 @@ const data: Record<string, object[]> = {
   staff: staff.map(stamp),
   posts: posts.map((p) => stamp({ ...p, publishedAt: new Date(p.publishedAt), published: true })),
   // 수집 시점 순서를 지키려고 takenAt 을 1분씩 줄인다 (자동 수집이 들어오면 실제 시각으로 바뀐다)
+  styles: styles.map((x) => stamp({ ...x, hidden: false })),
   instagram: instagram.map((g, i) => stamp({ ...g, takenAt: new Date(now.getTime() - i * 60000), hidden: false, source: "seed" })),
 };
 
@@ -60,6 +62,10 @@ await db.collection("posts").createIndex({ slug: 1 }, { unique: true });
 await db.collection("posts").createIndex({ publishedAt: -1 });
 await db.collection("services").createIndex({ tab: 1, order: 1 });
 await db.collection("instagram").createIndex({ code: 1 }, { unique: true });
+await db.collection("styles").createIndex({ num: 1 }, { unique: true });
+await db.collection("seo").createIndex({ route: 1 }, { unique: true });
+await db.collection("custompages").createIndex({ slug: 1 }, { unique: true });
+await db.collection("media").createIndex({ key: 1 }, { unique: true });
 await db.collection("instagram").createIndex({ pinned: -1, takenAt: -1 });
 
 await mongoose.disconnect();

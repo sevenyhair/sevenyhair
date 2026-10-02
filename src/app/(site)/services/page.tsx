@@ -4,14 +4,21 @@ import PageHero from "@/components/PageHero";
 import PriceTabs from "@/components/PriceTabs";
 import SiteFooter from "@/components/SiteFooter";
 import StyleBook from "@/components/StyleBook";
-import { styles } from "@/content/styles";
 import { routeMetadata } from "@/lib/seo";
-import { getPage, getServices, getShop } from "@/lib/queries";
+import { getPage, getServices, getShop, getStyles } from "@/lib/queries";
 
-export const metadata: Metadata = routeMetadata("services");
+export async function generateMetadata(): Promise<Metadata> {
+  return routeMetadata("services");
+}
 
 export default async function ServicesPage() {
-  const [shop, page, tables, home] = await Promise.all([getShop(), getPage("services"), getServices(), getPage("home")]);
+  const [shop, page, tables, home, styles] = await Promise.all([
+    getShop(),
+    getPage("services"),
+    getServices(),
+    getPage("home"),
+    getStyles(),
+  ]);
   const prices = page.sections.find((s) => s.key === "prices");
   const cta = home.sections.find((s) => s.kind === "cta");
 
