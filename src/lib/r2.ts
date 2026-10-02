@@ -74,6 +74,14 @@ export async function presignPut(c: R2Config, key: string, contentType: string, 
   return { uploadUrl, key, publicUrl: `${c.publicBaseUrl}/${key}` };
 }
 
+/** 서버에서 직접 올린다 (인스타 썸네일 등 — 브라우저를 거치지 않는 경우) */
+export async function putObject(c: R2Config, key: string, body: Uint8Array, contentType: string): Promise<string> {
+  await s3(c).send(
+    new PutObjectCommand({ Bucket: c.bucket, Key: key, Body: body, ContentType: contentType, CacheControl: UPLOAD_CACHE_CONTROL }),
+  );
+  return `${c.publicBaseUrl}/${key}`;
+}
+
 export async function deleteObject(c: R2Config, key: string): Promise<void> {
   await s3(c).send(new DeleteObjectCommand({ Bucket: c.bucket, Key: key }));
 }

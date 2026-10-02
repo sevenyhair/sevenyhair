@@ -1,42 +1,40 @@
 /**
  * seveny hair 사진 — 네이버 플레이스 "업체 사진" 22장 (2026-10-02 수집).
- * 원본 주소를 그대로 링크한다 (pstatic 은 외부 링크를 허용). R2 로 옮기면 이 파일만 바꾼다.
+ * 2026-10-02 R2(img.sevenyhair.com)로 옮겼다 — scripts/migrate-images.ts. 원래 주소는 DB media.source 에 남아 있다.
  * 방문자 리뷰 사진은 고객이 올린 것이라 쓰지 않는다.
  */
-const N = "https://ldb-phinf.pstatic.net/";
 
 export const PHOTOS = {
-  ownerPortrait: N + "20260724_178/1784889613718zWGxs_JPEG/IMG_4139.jpg", // 원장 + KCIA 배지 (1170×1244)
-  kciaAward: N + "20260724_13/1784889606018SVDOn_JPEG/IMG_4133.jpg", // 2026 KCIA 포스터 (정사각)
-  londonGroup: N + "20251023_17/17612258489498YJMF_JPEG/IMG_4883.jpeg", // 런던 사순 단체
-  londonMirror: N + "20251023_45/1761225849108UwBKv_JPEG/IMG_5178.jpeg", // 사순 교실 거울
-  londonFriends: N + "20251023_105/1761225848875NIls3_JPEG/IMG_4878.jpeg",
-  londonClass: N + "20251023_287/1761225849130VsyeM_JPEG/IMG_5010.jpeg", // 수강생 단체 (세로)
-  londonCollection: N + "20251023_217/17612256881365Nz0g_PNG/IMG_5183.png", // collection class 캡처
-  houseOfSassoon: N + "20251023_122/1761225688075i6Ebn_JPEG/IMG_5184.jpeg",
-  signWall: N + "20201125_114/16063095357017zjF1_JPEG/X8jKyDsh0BIOulVqd1de6zF8.jpeg.jpg", // SEVENY HAIR 벽 사인
-  interior: N + "20201210_122/1607609231239ty3W2_JPEG/PeFi5lP1Hs2zYMCzpI0Fls4F.jpeg.jpg", // 실내 (3024×3575)
-  styleAshLayer: N + "20231219_291/1702975810220gOT6G_JPEG/C5257F13-7CEA-4BD4-B809-2FBEB496129D.jpeg",
-  styleTeal: N + "20231219_170/17029758102978MITv_JPEG/5E793B9F-58A4-4454-962E-0B4A810432AB.jpeg",
-  styleMensCut: N + "20231219_39/1702975810389idutL_JPEG/4C67225C-47F8-4CD4-93BF-99A52D3829B6.jpeg",
-  styleBob: N + "20231219_70/1702975810360Ykto7_JPEG/14BC2E81-5B5E-4E92-8BA8-E8C2B5DD8E42.jpeg",
-  styleWave: N + "20231219_240/1702975811013Uq3Jl_JPEG/ABE6EB64-3F50-47A2-A48B-414936F22F84.jpeg",
-  styleBobBack: N + "20231219_20/1702975811125zT1Qj_JPEG/336C77D4-DDA0-48F4-B43B-7371FCB0D824.jpeg",
-  stylePinkViolet: N + "20231219_95/1702975810297JV771_JPEG/00E5FB81-0F75-40F4-86BE-9401733FE150.jpeg",
-  styleShort: N + "20231219_143/1702975810325QhLNc_JPEG/A7DB0736-5956-4321-888A-0B95A6BD0EBA.jpeg",
-  styleLongWave: N + "20231219_157/1702975810351n1gns_JPEG/D98578CB-D75C-45F6-81DB-61E2C8A7779C.jpeg",
-  interiorWide: N + "20201125_277/1606307629162PwXpy_JPEG/09TyEtXkPM40yZZ6MPawOXCC.jpeg.jpg", // 실내 (샹들리에)
-  signCurtain: N + "20201125_50/1606309502183l1Ybg_JPEG/e4lYhUFSu8QiCBY3PXuD3QfV.jpeg.jpg", // 커튼 위 사인
-  interiorAlt: N + "20201210_22/1607609261462pAz1l_JPEG/4NAphNLTGR8KrDOwmV7-QHJl.jpeg.jpg",
+  ownerPortrait: "https://img.sevenyhair.com/site/IMG_4139-b1a91ee4.jpg", // 원장 + KCIA 배지 (1170×1244)
+  kciaAward: "https://img.sevenyhair.com/site/IMG_4133-ec12d6be.jpg", // 2026 KCIA 포스터 (정사각)
+  londonGroup: "https://img.sevenyhair.com/site/IMG_4883-b0d723ad.jpg", // 런던 사순 단체
+  londonMirror: "https://img.sevenyhair.com/site/IMG_5178-f193b883.jpg", // 사순 교실 거울
+  londonFriends: "https://img.sevenyhair.com/site/IMG_4878-f3d9640c.jpg",
+  londonClass: "https://img.sevenyhair.com/site/IMG_5010-2ed30b9f.jpg", // 수강생 단체 (세로)
+  londonCollection: "https://img.sevenyhair.com/site/IMG_5183-0f2cc99a.jpg", // collection class 캡처
+  houseOfSassoon: "https://img.sevenyhair.com/site/IMG_5184-2c8339ec.jpg",
+  signWall: "https://img.sevenyhair.com/site/X8jKyDsh0BIOulVqd1de6zF8_jpeg-05b12491.jpg", // SEVENY HAIR 벽 사인
+  interior: "https://img.sevenyhair.com/site/PeFi5lP1Hs2zYMCzpI0Fls4F_jpeg-2d688c78.jpg", // 실내 (3024×3575)
+  styleAshLayer: "https://img.sevenyhair.com/site/C5257F13-7CEA-4BD4-B809-2FBEB496129D-3bd4e49e.jpg",
+  styleTeal: "https://img.sevenyhair.com/site/5E793B9F-58A4-4454-962E-0B4A810432AB-e06fe164.jpg",
+  styleMensCut: "https://img.sevenyhair.com/site/4C67225C-47F8-4CD4-93BF-99A52D3829B6-bf28bb5c.jpg",
+  styleBob: "https://img.sevenyhair.com/site/14BC2E81-5B5E-4E92-8BA8-E8C2B5DD8E42-2a2aa2b4.jpg",
+  styleWave: "https://img.sevenyhair.com/site/ABE6EB64-3F50-47A2-A48B-414936F22F84-bec1beb7.jpg",
+  styleBobBack: "https://img.sevenyhair.com/site/336C77D4-DDA0-48F4-B43B-7371FCB0D824-7a849651.jpg",
+  stylePinkViolet: "https://img.sevenyhair.com/site/00E5FB81-0F75-40F4-86BE-9401733FE150-82c81f2c.jpg",
+  styleShort: "https://img.sevenyhair.com/site/A7DB0736-5956-4321-888A-0B95A6BD0EBA-b4c0fc83.jpg",
+  styleLongWave: "https://img.sevenyhair.com/site/D98578CB-D75C-45F6-81DB-61E2C8A7779C-f179ede3.jpg",
+  interiorWide: "https://img.sevenyhair.com/site/09TyEtXkPM40yZZ6MPawOXCC_jpeg-db3ae7aa.jpg", // 실내 (샹들리에)
+  signCurtain: "https://img.sevenyhair.com/site/e4lYhUFSu8QiCBY3PXuD3QfV_jpeg-2900dc71.jpg", // 커튼 위 사인
+  interiorAlt: "https://img.sevenyhair.com/site/4NAphNLTGR8KrDOwmV7-QHJl_jpeg-bb9d276f.jpg",
 } as const;
 
-/** 네이버 리뷰 키워드 아이콘 (후기 아바타 자리) */
-const E = "https://ssl.pstatic.net/static/pup/emoji/";
+/** 네이버 리뷰 키워드 아이콘 (후기 아바타 자리) — 이것도 R2 로 옮겼다 */
 export const EMOJI = {
-  greenHeart: E + "green_heart20220119222224.png",
-  beatingHeart: E + "beating_heart20220119222223.png",
-  magnifier: E + "magnifying_glass20220119222236.png",
-  hairDone: E + "woman_getting_hair_done20220119222234.png",
-  sunglasses: E + "face_with_sunglasses20220119222235.png",
-  sparkles: E + "sparkles20220119222028.png",
+  greenHeart: "https://img.sevenyhair.com/site/green_heart20220119222224-967ccccc.webp",
+  beatingHeart: "https://img.sevenyhair.com/site/beating_heart20220119222223-c2421fe8.webp",
+  magnifier: "https://img.sevenyhair.com/site/magnifying_glass20220119222236-6c6b6d9a.webp",
+  hairDone: "https://img.sevenyhair.com/site/woman_getting_hair_done20220119222234-b497c415.webp",
+  sunglasses: "https://img.sevenyhair.com/site/face_with_sunglasses20220119222235-f38fb766.webp",
+  sparkles: "https://img.sevenyhair.com/site/sparkles20220119222028-3051bbb8.webp",
 } as const;

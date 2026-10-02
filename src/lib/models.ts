@@ -91,6 +91,7 @@ const InstagramSchema = new Schema(
     hidden: { type: Boolean, default: false },
     order: { type: Number, default: 0 },
     source: { type: String, default: "manual" },
+    thumbnail: String, // R2 썸네일
   },
   opts,
 );
@@ -149,6 +150,7 @@ const MediaSchema = new Schema(
     width: Number,
     height: Number,
     alt: String,
+    source: String, // 외부에서 옮겨 온 이미지의 원래 주소 (scripts/migrate-images.ts)
   },
   opts,
 );

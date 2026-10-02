@@ -11,7 +11,8 @@
     "start": "next start",
     "lint": "next lint",
     "seed": "node --env-file=.env.local --experimental-strip-types --no-warnings scripts/seed.ts",
-    "ig": "node --env-file=.env.local --experimental-strip-types --no-warnings scripts/ig.ts"
+    "ig": "node --env-file=.env.local --experimental-strip-types --no-warnings scripts/ig.ts",
+    "images:migrate": "node --env-file=.env.local --experimental-strip-types --no-warnings scripts/migrate-images.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1145.0",
@@ -40,6 +41,7 @@
     "eslint": "^9.16.0",
     "eslint-config-next": "^15.1.0",
     "postcss": "^8.4.49",
+    "sharp": "^0.34.5",
     "tailwindcss": "^3.4.15",
     "typescript": "^5.7.0"
   }

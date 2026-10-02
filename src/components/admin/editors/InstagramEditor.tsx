@@ -6,7 +6,7 @@ import { igPermalink } from "@/content/instagram";
 import { parseInstagramLink, saveInstagram } from "@/lib/admin/actions";
 import { Badge, Button, Card, Input, PageHeader, SaveBar, SortableList, useSaveable, useToast } from "../ui";
 
-type Row = { code: string; type: "reel" | "post"; title: string; caption?: string; pinned?: boolean; hidden?: boolean };
+type Row = { code: string; type: "reel" | "post"; title: string; caption?: string; pinned?: boolean; hidden?: boolean; thumbnail?: string };
 
 /**
  * 인스타그램 피드 — 자동 수집 없이 직접 관리한다 (2026-10-02 결정).
@@ -15,7 +15,15 @@ type Row = { code: string; type: "reel" | "post"; title: string; caption?: strin
  */
 export default function InstagramEditor({ initial }: { initial: Row[] }) {
   const { value: items, setValue, dirty, saving, save, reset } = useSaveable<Row[]>(
-    initial.map((r) => ({ code: r.code, type: r.type, title: r.title ?? "", caption: r.caption ?? "", pinned: !!r.pinned, hidden: !!r.hidden })),
+    initial.map((r) => ({
+      code: r.code,
+      type: r.type,
+      title: r.title ?? "",
+      caption: r.caption ?? "",
+      pinned: !!r.pinned,
+      hidden: !!r.hidden,
+      thumbnail: r.thumbnail ?? "",
+    })),
     saveInstagram,
   );
   const [link, setLink] = useState("");
@@ -62,7 +70,7 @@ export default function InstagramEditor({ initial }: { initial: Row[] }) {
               <GripVertical className="h-4 w-4" />
             </span>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`/api/ig/${r.code}?size=m`} alt="" loading="lazy" className="h-20 w-16 shrink-0 rounded-lg bg-zinc-100 object-cover" />
+            <img src={r.thumbnail || `/api/ig/${r.code}?size=m`} alt="" loading="lazy" className="h-20 w-16 shrink-0 rounded-lg bg-zinc-100 object-cover" />
             <div className="min-w-0 flex-1 space-y-1.5">
               <div className="flex items-center gap-2">
                 <span className="text-[12px] text-zinc-400">#{i + 1}</span>

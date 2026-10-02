@@ -18,7 +18,7 @@ import {
   TestimonialModel,
 } from "../models";
 import { connectDB } from "../mongodb";
-import { deleteObject, readR2Config } from "../r2";
+import { deleteObject, putObject, readR2Config } from "../r2";
 import { sanitizeRichHtml } from "../sanitize";
 import type { CustomPage, MediaItem, Page, SeoOverride, Service, Shop, Staff, Testimonial } from "../types";
 import { requireAdmin } from "./guard";
@@ -133,11 +133,36 @@ export async function saveStyles(items: Style[]) {
 
 /* ───────── 인스타그램 ───────── */
 
-type IgRow = { code: string; type: "reel" | "post"; title: string; caption?: string; pinned?: boolean; hidden?: boolean };
+type IgRow = {
+  code: string;
+  type: "reel" | "post";
+  title: string;
+  caption?: string;
+  pinned?: boolean;
+  hidden?: boolean;
+  thumbnail?: string;
+};
+
+/** 인스타 썸네일을 받아 R2 에 올린다. R2 가 없거나 실패하면 빈 값 (사이트는 /api/ig 프록시로 보여준다) */
+async function uploadIgThumbnail(code: string): Promise<string> {
+  const r2 = readR2Config();
+  if (!r2) return "";
+  try {
+    const res = await fetch(`https://www.instagram.com/p/${code}/media/?size=l`, { redirect: "follow", cache: "no-store" });
+    const type = res.headers.get("content-type") ?? "";
+    if (!res.ok || !type.startsWith("image/")) return "";
+    return await putObject(r2, `instagram/${code}.jpg`, new Uint8Array(await res.arrayBuffer()), type);
+  } catch (err) {
+    console.error(`[admin] 인스타 썸네일 ${code} 실패`, err);
+    return "";
+  }
+}
 
 export async function saveInstagram(items: IgRow[]) {
   return run("saveInstagram", async () => {
     const now = Date.now();
+    // 새로 추가한 게시물은 썸네일을 R2 에 올려 둔다 (인스타 CDN 주소는 만료된다)
+    for (const it of items) if (!it.thumbnail) it.thumbnail = await uploadIgThumbnail(it.code);
     await InstagramModel.deleteMany({});
     if (items.length) {
       await InstagramModel.insertMany(
@@ -148,6 +173,7 @@ export async function saveInstagram(items: IgRow[]) {
           caption: str(it.caption, 500),
           pinned: !!it.pinned,
           hidden: !!it.hidden,
+          thumbnail: str(it.thumbnail, 500),
           order: i + 1,
           takenAt: new Date(now - i * 60000),
           source: "manual",

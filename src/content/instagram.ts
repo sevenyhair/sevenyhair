@@ -14,6 +14,8 @@ export type InstagramItem = {
   title: string;
   caption: string;
   pinned?: boolean;
+  /** R2 에 올린 썸네일 (img.sevenyhair.com/instagram/<code>.jpg). 없으면 /api/ig 프록시 */
+  thumbnail?: string;
   order: number;
 };
 

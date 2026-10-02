@@ -22,7 +22,7 @@ export const styles: Style[] = [
     "gender": "f",
     "images": [
       {
-        "src": "https://ldb-phinf.pstatic.net/20230511_274/1683812624910jvbAD_JPEG/00E5FB81-0F75-40F4-86BE-9401733FE150.jpeg",
+        "src": "https://img.sevenyhair.com/site/00E5FB81-0F75-40F4-86BE-9401733FE150-97854f87.jpg",
         "w": 1440,
         "h": 1552
       }
@@ -37,7 +37,7 @@ export const styles: Style[] = [
     "gender": "f",
     "images": [
       {
-        "src": "https://ldb-phinf.pstatic.net/20230511_80/1683811369815oiWo4_JPEG/IMG_5608.jpeg",
+        "src": "https://img.sevenyhair.com/site/IMG_5608-4575a1b8.jpg",
         "w": 1170,
         "h": 1844
       }
@@ -52,7 +52,7 @@ export const styles: Style[] = [
     "gender": "f",
     "images": [
       {
-        "src": "https://ldb-phinf.pstatic.net/20230511_186/1683811130555Mp7QP_JPEG/ABE6EB64-3F50-47A2-A48B-414936F22F84.jpeg",
+        "src": "https://img.sevenyhair.com/site/ABE6EB64-3F50-47A2-A48B-414936F22F84-553b26ea.jpg",
         "w": 2697,
         "h": 3371
       }
@@ -67,7 +67,7 @@ export const styles: Style[] = [
     "gender": "f",
     "images": [
       {
-        "src": "https://ldb-phinf.pstatic.net/20210307_122/1615119743236DuWsj_JPEG/XGSIrRTCgxqWxbY2EhV1VR_v.jpeg.jpg",
+        "src": "https://img.sevenyhair.com/site/XGSIrRTCgxqWxbY2EhV1VR_v_jpeg-37f70550.jpg",
         "w": 900,
         "h": 1124
       }
@@ -82,7 +82,7 @@ export const styles: Style[] = [
     "gender": "f",
     "images": [
       {
-        "src": "https://ldb-phinf.pstatic.net/20230511_195/1683810677209YY1gW_JPEG/1F1B9A8E-36D3-4CC3-9050-C809A1EFBB61.jpeg",
+        "src": "https://img.sevenyhair.com/site/1F1B9A8E-36D3-4CC3-9050-C809A1EFBB61-c8c7d98d.jpg",
         "w": 1440,
         "h": 1637
       }
@@ -97,7 +97,7 @@ export const styles: Style[] = [
     "gender": "f",
     "images": [
       {
-        "src": "https://ldb-phinf.pstatic.net/20230511_202/168381072814208A8N_JPEG/C45E7053-1342-47D6-B6D0-5517B784F6E6.jpeg",
+        "src": "https://img.sevenyhair.com/site/C45E7053-1342-47D6-B6D0-5517B784F6E6-6dc77fa2.jpg",
         "w": 1440,
         "h": 1631
       }
@@ -112,12 +112,12 @@ export const styles: Style[] = [
     "gender": "f",
     "images": [
       {
-        "src": "https://ldb-phinf.pstatic.net/20210620_104/16241555475006FOEp_JPEG/ZichiAqNDeXqFAtP11EZrDLr.jpeg.jpg",
+        "src": "https://img.sevenyhair.com/site/ZichiAqNDeXqFAtP11EZrDLr_jpeg-67e1bb39.jpg",
         "w": 1440,
         "h": 1725
       },
       {
-        "src": "https://ldb-phinf.pstatic.net/20210620_141/1624155553445Sl2Jf_JPEG/iok1A1Jsg7iJTzW7td2Zr4rc.jpeg.jpg",
+        "src": "https://img.sevenyhair.com/site/iok1A1Jsg7iJTzW7td2Zr4rc_jpeg-921355dd.jpg",
         "w": 1440,
         "h": 1735
       }
@@ -132,7 +132,7 @@ export const styles: Style[] = [
     "gender": "f",
     "images": [
       {
-        "src": "https://ldb-phinf.pstatic.net/20230511_86/1683810819783Nsmuw_JPEG/FF079501-8C07-4DB7-9BA8-1095AD92E65D.jpeg",
+        "src": "https://img.sevenyhair.com/site/FF079501-8C07-4DB7-9BA8-1095AD92E65D-9d29170c.jpg",
         "w": 2535,
         "h": 2706
       }
@@ -147,12 +147,12 @@ export const styles: Style[] = [
     "gender": "f",
     "images": [
       {
-        "src": "https://ldb-phinf.pstatic.net/20230512_59/1683877549368b6Him_JPEG/14CBA5EB-06B7-4E38-9F11-F10D7F5372A5.jpeg",
+        "src": "https://img.sevenyhair.com/site/14CBA5EB-06B7-4E38-9F11-F10D7F5372A5-0375e617.jpg",
         "w": 1440,
         "h": 1531
       },
       {
-        "src": "https://ldb-phinf.pstatic.net/20230511_87/1683811507443b8Ee6_JPEG/0A9360E5-80B7-4443-9CBD-26081776E41A.jpeg",
+        "src": "https://img.sevenyhair.com/site/0A9360E5-80B7-4443-9CBD-26081776E41A-d150d612.jpg",
         "w": 1440,
         "h": 1526
       }
@@ -167,7 +167,7 @@ export const styles: Style[] = [
     "gender": "f",
     "images": [
       {
-        "src": "https://ldb-phinf.pstatic.net/20210119_238/1611066881763N9VGO_JPEG/_1SJpvWO1wpkvIBM2I4WTUrc.jpeg.jpg",
+        "src": "https://img.sevenyhair.com/site/_1SJpvWO1wpkvIBM2I4WTUrc_jpeg-ec0d2fea.jpg",
         "w": 900,
         "h": 1024
       }
@@ -182,7 +182,7 @@ export const styles: Style[] = [
     "gender": "f",
     "images": [
       {
-        "src": "https://ldb-phinf.pstatic.net/20210307_189/1615119966805DftxR_JPEG/etqKESBt0CLR4LfzdIwV1Eil.jpeg.jpg",
+        "src": "https://img.sevenyhair.com/site/etqKESBt0CLR4LfzdIwV1Eil_jpeg-c535e99e.jpg",
         "w": 1440,
         "h": 1440
       }
@@ -197,7 +197,7 @@ export const styles: Style[] = [
     "gender": "f",
     "images": [
       {
-        "src": "https://ldb-phinf.pstatic.net/20210119_282/1611067873946jG5JF_JPEG/j8DwJ3cOc8nrRLgUCfC5q4s4.jpeg.jpg",
+        "src": "https://img.sevenyhair.com/site/j8DwJ3cOc8nrRLgUCfC5q4s4_jpeg-7c5bf719.jpg",
         "w": 1024,
         "h": 1280
       }
@@ -212,7 +212,7 @@ export const styles: Style[] = [
     "gender": "f",
     "images": [
       {
-        "src": "https://ldb-phinf.pstatic.net/20230511_82/1683810883484YBn2B_JPEG/IMG_8888.jpeg",
+        "src": "https://img.sevenyhair.com/site/IMG_8888-69abc57c.jpg",
         "w": 1170,
         "h": 1391
       }
@@ -227,7 +227,7 @@ export const styles: Style[] = [
     "gender": "f",
     "images": [
       {
-        "src": "https://ldb-phinf.pstatic.net/20230511_274/1683810609362HX3TX_JPEG/A7DB0736-5956-4321-888A-0B95A6BD0EBA.jpeg",
+        "src": "https://img.sevenyhair.com/site/A7DB0736-5956-4321-888A-0B95A6BD0EBA-04aefe71.jpg",
         "w": 1440,
         "h": 1529
       }
@@ -242,7 +242,7 @@ export const styles: Style[] = [
     "gender": "f",
     "images": [
       {
-        "src": "https://ldb-phinf.pstatic.net/20230511_74/1683811056033edIRX_JPEG/EB055098-E424-4E87-BCA0-3515786958C2.jpeg",
+        "src": "https://img.sevenyhair.com/site/EB055098-E424-4E87-BCA0-3515786958C2-bdfbe62f.jpg",
         "w": 1440,
         "h": 1440
       }
@@ -257,7 +257,7 @@ export const styles: Style[] = [
     "gender": "f",
     "images": [
       {
-        "src": "https://ldb-phinf.pstatic.net/20250617_65/1750169276604pmsQg_JPEG/IMG_9631.jpeg",
+        "src": "https://img.sevenyhair.com/site/IMG_9631-aa7482d3.jpg",
         "w": 1170,
         "h": 1316
       }
@@ -272,12 +272,12 @@ export const styles: Style[] = [
     "gender": "f",
     "images": [
       {
-        "src": "https://ldb-phinf.pstatic.net/20250617_70/1750168014754ai79k_JPEG/IMG_9496.jpeg",
+        "src": "https://img.sevenyhair.com/site/IMG_9496-609e7893.jpg",
         "w": 2426,
         "h": 3689
       },
       {
-        "src": "https://ldb-phinf.pstatic.net/20250617_241/1750168014811OjiFg_JPEG/IMG_9495.jpeg",
+        "src": "https://img.sevenyhair.com/site/IMG_9495-6d8a7106.jpg",
         "w": 3024,
         "h": 4032
       }
@@ -292,12 +292,12 @@ export const styles: Style[] = [
     "gender": "f",
     "images": [
       {
-        "src": "https://ldb-phinf.pstatic.net/20250617_79/1750168183042RHXx6_JPEG/IMG_9621.jpeg",
+        "src": "https://img.sevenyhair.com/site/IMG_9621-992c03f3.jpg",
         "w": 953,
         "h": 1537
       },
       {
-        "src": "https://ldb-phinf.pstatic.net/20250617_218/1750168183583SAKpc_JPEG/IMG_9618.jpeg",
+        "src": "https://img.sevenyhair.com/site/IMG_9618-4d08df9a.jpg",
         "w": 2067,
         "h": 3362
       }
@@ -312,7 +312,7 @@ export const styles: Style[] = [
     "gender": "f",
     "images": [
       {
-        "src": "https://ldb-phinf.pstatic.net/20210307_295/1615119887382M2SkE_JPEG/ZiDEC2UwZrYk7ToSjgRvd3sx.jpeg.jpg",
+        "src": "https://img.sevenyhair.com/site/ZiDEC2UwZrYk7ToSjgRvd3sx_jpeg-6c4517a3.jpg",
         "w": 1536,
         "h": 2048
       }
@@ -327,12 +327,12 @@ export const styles: Style[] = [
     "gender": "m",
     "images": [
       {
-        "src": "https://ldb-phinf.pstatic.net/20230512_133/16838697041107p0yU_JPEG/IMG_7517.jpeg",
+        "src": "https://img.sevenyhair.com/site/IMG_7517-4dd98c69.jpg",
         "w": 1170,
         "h": 1704
       },
       {
-        "src": "https://ldb-phinf.pstatic.net/20230512_150/1683869704016EcXSF_JPEG/IMG_7518.jpeg",
+        "src": "https://img.sevenyhair.com/site/IMG_7518-bfebe82a.jpg",
         "w": 1170,
         "h": 1814
       }
@@ -347,7 +347,7 @@ export const styles: Style[] = [
     "gender": "m",
     "images": [
       {
-        "src": "https://ldb-phinf.pstatic.net/20230512_20/1683869773598a9AjH_JPEG/IMG_6983.jpeg",
+        "src": "https://img.sevenyhair.com/site/IMG_6983-810c7b58.jpg",
         "w": 1170,
         "h": 1539
       }
@@ -362,12 +362,12 @@ export const styles: Style[] = [
     "gender": "m",
     "images": [
       {
-        "src": "https://ldb-phinf.pstatic.net/20230512_237/1683869922339NPJM6_JPEG/IMG_6239.jpeg",
+        "src": "https://img.sevenyhair.com/site/IMG_6239-df5bf618.jpg",
         "w": 1130,
         "h": 1525
       },
       {
-        "src": "https://ldb-phinf.pstatic.net/20230512_37/1683869922343qqhIG_JPEG/IMG_6237.jpeg",
+        "src": "https://img.sevenyhair.com/site/IMG_6237-fccd1f40.jpg",
         "w": 1130,
         "h": 1605
       }
@@ -382,7 +382,7 @@ export const styles: Style[] = [
     "gender": "m",
     "images": [
       {
-        "src": "https://ldb-phinf.pstatic.net/20250617_49/17501683917223lw5H_JPEG/IMG_5643.jpeg",
+        "src": "https://img.sevenyhair.com/site/IMG_5643-5d30e51f.jpg",
         "w": 1836,
         "h": 2448
       }
@@ -397,17 +397,17 @@ export const styles: Style[] = [
     "gender": "m",
     "images": [
       {
-        "src": "https://ldb-phinf.pstatic.net/20250617_131/1750168661916abXzA_JPEG/IMG_3435.jpeg",
+        "src": "https://img.sevenyhair.com/site/IMG_3435-d73a4b17.jpg",
         "w": 1534,
         "h": 2448
       },
       {
-        "src": "https://ldb-phinf.pstatic.net/20250617_239/1750168662280sicry_JPEG/IMG_3429.jpeg",
+        "src": "https://img.sevenyhair.com/site/IMG_3429-8220b7c9.jpg",
         "w": 2623,
         "h": 4029
       },
       {
-        "src": "https://ldb-phinf.pstatic.net/20250617_287/175016866169714Kr4_JPEG/IMG_4901.jpeg",
+        "src": "https://img.sevenyhair.com/site/IMG_4901-d4563b73.jpg",
         "w": 1836,
         "h": 2448
       }
@@ -422,7 +422,7 @@ export const styles: Style[] = [
     "gender": "m",
     "images": [
       {
-        "src": "https://ldb-phinf.pstatic.net/20250617_98/1750169108649f8F7S_JPEG/IMG_4394.jpeg",
+        "src": "https://img.sevenyhair.com/site/IMG_4394-20886a0a.jpg",
         "w": 1280,
         "h": 2158
       }
@@ -437,7 +437,7 @@ export const styles: Style[] = [
     "gender": "m",
     "images": [
       {
-        "src": "https://ldb-phinf.pstatic.net/20250617_244/1750169389717s7u4a_JPEG/IMG_9632.jpeg",
+        "src": "https://img.sevenyhair.com/site/IMG_9632-10fbb207.jpg",
         "w": 1170,
         "h": 1207
       }
