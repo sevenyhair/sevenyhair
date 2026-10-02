@@ -1,9 +1,6 @@
-import type { Metadata } from "next";
-import StaffEditor from "@/components/admin/editors/StaffEditor";
-import { getStaff } from "@/lib/queries";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = { title: "원장 소개" };
-
-export default async function StaffAdminPage() {
-  return <StaffEditor initial={await getStaff()} />;
+/** 옛 메뉴 주소 — 원장 소개 → About 페이지의 원장 소개 블록 (2026-10-02 페이지별 메뉴로 묶음) */
+export default function Page() {
+  redirect("/admin/pages/about?open=staff");
 }

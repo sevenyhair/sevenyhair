@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { connectDB } from "./mongodb";
 import {
+  BlockModel,
   CustomPageModel,
   InstagramModel,
   MediaModel,
@@ -17,7 +18,8 @@ import { styles as styleDefaults, type Style } from "@/content/styles";
 import { instagram as instagramDefaults, type InstagramItem } from "@/content/instagram";
 import * as defaults from "@/content/defaults";
 import * as pageDefaults from "@/content/pages";
-import type { CustomPage, MediaItem, Page, Post, SeoOverride, Service, Shop, Staff, Testimonial } from "./types";
+import { upgradePage } from "./blocks";
+import type { CustomPage, MediaItem, Page, Post, Section, SeoOverride, Service, SharedBlocks, Shop, Staff, Testimonial } from "./types";
 
 /*
  * DB 를 먼저 읽고, 실패하거나 비어 있으면 기본 콘텐츠로 그린다.
@@ -49,13 +51,27 @@ const PAGE_DEFAULTS: Record<string, Page> = {
   ...pageDefaults.pages,
 };
 
-export const getPage = cache((slug: string) =>
-  fromDb<Page>(
-    `getPage(${slug})`,
-    async () => clean(await PageModel.findOne({ slug }).lean()),
-    PAGE_DEFAULTS[slug],
-  ),
-);
+export const getPage = cache(async (slug: string) => {
+  const page = await fromDb<Page>(`getPage(${slug})`, async () => clean(await PageModel.findOne({ slug }).lean()), PAGE_DEFAULTS[slug]);
+  return PAGE_DEFAULTS[slug] ? upgradePage(page, PAGE_DEFAULTS[slug]) : page;
+});
+
+/**
+ * 공통 블록 내용 (values · cta). blocks 컬렉션 → 없으면 옛 홈 페이지 문서의 같은 종류 섹션 → 기본값.
+ * 옛 구조에서는 홈 문서에 들어 있었고, 다른 페이지는 홈 것을 빌려 썼다.
+ */
+export const getSharedBlocks = cache(async (): Promise<SharedBlocks> => {
+  const rows = await fromDb<Section[]>("getSharedBlocks", async () => clean(await BlockModel.find().lean()), []);
+  const legacy = await fromDb<Page | null>("getSharedBlocks(legacy)", async () => clean(await PageModel.findOne({ slug: "home", version: { $exists: false } }).lean()), null);
+  const pick = (kind: "values" | "cta"): Section =>
+    rows.find((r) => r.kind === kind) ?? legacy?.sections?.find((s) => s.kind === kind) ?? defaults.sharedBlocks[kind];
+  const strip = (s: Section): Section => {
+    const { _id, createdAt, updatedAt, __v, ...rest } = s as Section & Record<string, unknown>;
+    void _id; void createdAt; void updatedAt; void __v;
+    return { ...rest, key: rest.kind } as Section;
+  };
+  return { values: strip(pick("values")), cta: strip(pick("cta")) };
+});
 
 export const getTestimonials = cache(() =>
   fromDb<Testimonial[]>(

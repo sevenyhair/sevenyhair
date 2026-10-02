@@ -15,9 +15,11 @@ function Counter({ n, max }: { n: number; max: number }) {
   return <span className={`text-[11px] tabular-nums ${n > max ? "text-amber-600" : "text-zinc-400"}`}>{n}/{max}</span>;
 }
 
-export default function SeoEditor({ route, keys, defaults, initial, site }: {
+/** inPage: 페이지 메뉴 안의 "SEO · 공유" 탭으로 쓸 때 — 머리글 · 페이지 고르기 줄을 뺀다 */
+export default function SeoEditor({ route, keys, defaults, initial, site, inPage = false }: {
   route: string;
   keys: string[];
+  inPage?: boolean;
   defaults: RouteSeo;
   initial: SeoOverride;
   site: string;
@@ -43,6 +45,8 @@ export default function SeoEditor({ route, keys, defaults, initial, site }: {
 
   return (
     <>
+      {!inPage && (
+        <>
       <PageHeader title="SEO · 공유" description="검색 결과와 카카오톡·인스타 링크 미리보기에 쓰입니다. 빈 칸은 기본값을 씁니다." />
       <div className="mb-6 flex gap-1 overflow-x-auto rounded-xl bg-zinc-200/60 p-1">
         {keys.map((k) => (
@@ -56,6 +60,8 @@ export default function SeoEditor({ route, keys, defaults, initial, site }: {
         ))}
       </div>
 
+        </>
+      )}
       <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
         <div className="space-y-6">
           <Card title="검색 결과">

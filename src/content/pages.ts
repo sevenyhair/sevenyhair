@@ -1,5 +1,6 @@
 /**
  * 하위 페이지 기본 콘텐츠 (services · salon · about · journal · contact). 제목은 영어, 설명은 한글.
+ * sections 는 위에서부터 그리는 블록 목록 (종류는 src/content/blocks.ts).
  * 출처: 네이버 플레이스 메뉴·소개·디자이너 정보 (2026-10-02).
  */
 import type { Page, PriceRow, Post, Service, Staff } from "../lib/types.ts";
@@ -47,21 +48,26 @@ export const pages: Record<string, Page> = {
     slug: "services",
     title: "Services — 세브니헤어 시술 · 가격",
     hero: { heading: "Services", image: PHOTOS.styleAshLayer },
+    version: 2,
     sections: [
+      { key: "price-table", kind: "prices" },
       {
         key: "prices",
-        kind: "text",
+        kind: "price-note",
         heading: "2026년 기준 기본 가격입니다 (단위: 원).",
         body: [
           "모발 길이와 숱, 상태에 따라 가격이 달라질 수 있으며, 시술 전에 꼭 먼저 안내해 드립니다. 모든 시술은 우선 예약제로 운영되니 네이버 예약 또는 전화로 예약해 주세요.",
         ],
       },
+      { key: "stylebook", kind: "stylebook", heading: "Style book" },
+      { key: "cta", kind: "cta" },
     ],
   },
   salon: {
     slug: "salon",
     title: "The Salon — 세브니헤어",
     hero: { heading: "The Salon", image: PHOTOS.interiorWide },
+    version: 2,
     sections: [
       {
         key: "intro",
@@ -73,6 +79,7 @@ export const pages: Record<string, Page> = {
           "동래 화목아파트 정문 쪽, 충렬사로 38 1층에 있습니다. 4호선 충렬사역 3번 출구에서 도보 6분, 충렬사역 · 서원시장 버스정류장에서 도보 5분입니다. 전용 주차장은 없습니다.",
         ],
       },
+      { key: "gallery", kind: "gallery", images: gallery.desktop.map((g) => ({ src: g.src })) },
       {
         key: "london",
         kind: "image-band",
@@ -89,16 +96,19 @@ export const pages: Record<string, Page> = {
         ],
         cta: [{ label: "인스타그램에서 보기", href: "https://www.instagram.com/reel/DPpfUevjOEi/", external: true }],
       },
+      { key: "values", kind: "values" },
     ],
   },
   about: {
     slug: "about",
     title: "About — Seveny",
     hero: { heading: "About", image: PHOTOS.londonCollection },
+    version: 2,
     sections: [
+      { key: "staff", kind: "staff" },
       {
         key: "milestones",
-        kind: "text",
+        kind: "milestones",
         heading: "Milestones",
         items: [
           { title: "2026", body: "KCIA 한국소비자산업평가 우수 헤어디자이너 (3년 연속)" },
@@ -119,12 +129,17 @@ export const pages: Record<string, Page> = {
     slug: "journal",
     title: "Journal — 세브니헤어 인스타그램",
     hero: { heading: "Journal", image: PHOTOS.signCurtain },
-    sections: [],
+    version: 2,
+    sections: [
+      { key: "feed", kind: "instagram", count: 24, follow: true },
+      { key: "cta", kind: "cta" },
+    ],
   },
   contact: {
     slug: "contact",
     title: "Contact — 세브니헤어 오시는 길 · 예약",
     hero: { heading: "Opening hours", image: PHOTOS.signWall },
+    version: 2,
     sections: [],
   },
 };

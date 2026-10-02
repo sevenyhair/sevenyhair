@@ -8,6 +8,7 @@
  *
  * scripts/seed.ts 가 이 파일을 그대로 DB 에 넣는다.
  */
+import type { SharedBlocks } from "../lib/types.ts";
 import { EMOJI, PHOTOS } from "./photos.ts";
 
 export const LINKS = {
@@ -101,45 +102,68 @@ export const homePage = {
       images: [{ src: PHOTOS.styleWave }, { src: PHOTOS.stylePinkViolet }],
       cta: [{ label: "시술 · 가격 보기", href: "/services" }],
     },
+    { key: "values", kind: "values" },
     {
-      key: "values",
-      kind: "values",
-      items: [
-        {
-          title: "Awarded 3 years",
-          body: "KCIA 한국소비자산업평가에서 2024 · 2025 · 2026년 3년 연속 우수 헤어디자이너 및 우수업체로 선정되었습니다.",
-          image: { src: PHOTOS.kciaAward },
-          link: { label: "더 알아보기", href: LINKS.naverPlace, external: true },
-        },
-        {
-          title: "Trained in London",
-          body: "사순웨이 마스터 과정(비달사순 ABC)을 수료하고, 2025년 영국 런던 비달사순 아카데미 Collection 코스를 이수했습니다.",
-          image: { src: PHOTOS.houseOfSassoon },
-          link: { label: "더 알아보기", href: "/about" },
-        },
-        {
-          title: "One-to-one",
-          body: "디자이너 한 명이 운영하는 우선 예약제 살롱. 오직 한 분만을 위한 조용하고 편안한 시간을 보장합니다.",
-          image: { src: PHOTOS.signCurtain },
-          link: { label: "예약하기", href: LINKS.booking, external: true },
-        },
-        {
-          title: "Tested first",
-          body: "살롱에서 쓰는 모든 시술 약은 Seveny가 직접 써보고 테스트한 뒤 검증된 제품만 사용합니다.",
-          image: { src: PHOTOS.styleAshLayer },
-          link: { label: "더 알아보기", href: "/salon" },
-        },
-      ],
+      key: "testimonials",
+      kind: "testimonials",
+      heading: "What our\nguests say",
+      images: [{ src: PHOTOS.interiorWide }],
     },
     {
-      key: "cta",
-      kind: "cta",
-      kicker: "새로운 스타일, 준비되셨나요?",
-      heading: "We look forward to seeing you !",
-      body: ["모든 시술은 우선 예약제로 운영됩니다. 네이버 예약이나 전화로 편하게 예약해 주세요."],
-      images: [{ src: PHOTOS.signWall }],
+      key: "journal",
+      kind: "instagram",
+      heading: "Latest from\nthe journal",
+      count: 3,
+      cta: [{ label: "전체 보기", href: "/journal" }],
     },
+    { key: "cta", kind: "cta" },
   ],
+  version: 2,
+};
+
+/**
+ * 공통 블록 내용 — 여러 페이지에 같이 쓰인다 (홈 · The Salon 의 아이콘 줄, 홈 · Services · Journal 의 예약 유도).
+ * DB 는 blocks 컬렉션(kind 별 한 문서). 관리자 어느 페이지에서 고쳐도 전부 바뀐다.
+ */
+export const sharedBlocks: SharedBlocks = {
+  values: {
+    key: "values",
+    kind: "values",
+    items: [
+      {
+        title: "Awarded 3 years",
+        body: "KCIA 한국소비자산업평가에서 2024 · 2025 · 2026년 3년 연속 우수 헤어디자이너 및 우수업체로 선정되었습니다.",
+        image: { src: PHOTOS.kciaAward },
+        link: { label: "더 알아보기", href: LINKS.naverPlace, external: true },
+      },
+      {
+        title: "Trained in London",
+        body: "사순웨이 마스터 과정(비달사순 ABC)을 수료하고, 2025년 영국 런던 비달사순 아카데미 Collection 코스를 이수했습니다.",
+        image: { src: PHOTOS.houseOfSassoon },
+        link: { label: "더 알아보기", href: "/about" },
+      },
+      {
+        title: "One-to-one",
+        body: "디자이너 한 명이 운영하는 우선 예약제 살롱. 오직 한 분만을 위한 조용하고 편안한 시간을 보장합니다.",
+        image: { src: PHOTOS.signCurtain },
+        link: { label: "예약하기", href: LINKS.booking, external: true },
+      },
+      {
+        title: "Tested first",
+        body: "살롱에서 쓰는 모든 시술 약은 Seveny가 직접 써보고 테스트한 뒤 검증된 제품만 사용합니다.",
+        image: { src: PHOTOS.styleAshLayer },
+        link: { label: "더 알아보기", href: "/salon" },
+      },
+    ],
+  },
+  cta: {
+    key: "cta",
+    kind: "cta",
+    kicker: "새로운 스타일, 준비되셨나요?",
+    heading: "We look forward to seeing you !",
+    body: ["모든 시술은 우선 예약제로 운영됩니다. 네이버 예약이나 전화로 편하게 예약해 주세요."],
+    images: [{ src: PHOTOS.signWall }],
+  },
 };
 
 /**

@@ -11,4 +11,6 @@ export const COLLECTIONS = {
   seo: "seo",
   customPages: "custompages",
   media: "media",
+  blocks: "blocks", // 공통 블록 내용 (values · cta)
+  drafts: "drafts", // 관리자 저장 전 미리보기 (1시간 뒤 삭제)
 } as const;

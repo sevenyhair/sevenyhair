@@ -7,7 +7,7 @@
  * Node 22 의 --experimental-strip-types 로 실행한다 (package.json 참고).
  */
 import mongoose from "mongoose";
-import { homePage, shop, testimonials } from "../src/content/defaults.ts";
+import { homePage, sharedBlocks, shop, testimonials } from "../src/content/defaults.ts";
 import { pages, posts, services, staff } from "../src/content/pages.ts";
 import { instagram } from "../src/content/instagram.ts";
 import { styles } from "../src/content/styles.ts";
@@ -28,6 +28,7 @@ const stamp = <T extends object>(d: T) => ({ ...d, createdAt: now, updatedAt: no
 const data: Record<string, object[]> = {
   shop: [stamp({ key: "main", ...shop })],
   pages: [homePage, ...Object.values(pages)].map(stamp),
+  blocks: Object.values(sharedBlocks).map(stamp), // 공통 블록 (values · cta)
   services: services.map((s) => stamp({ ...s, published: true })),
   testimonials: testimonials.map((t) => stamp({ ...t, published: true })),
   staff: staff.map(stamp),

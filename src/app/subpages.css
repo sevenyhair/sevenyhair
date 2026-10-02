@@ -511,3 +511,6 @@
 .rich-text th, .rich-text td { padding: 10px 0; border-bottom: 1px solid var(--gainsboro); text-align: left; }
 .rich-text iframe { width: 100%; aspect-ratio: 16 / 9; height: auto; border: 0; }
 .rich-text [style*="text-align: center"] { text-align: center; }
+
+/* 관리자 미리보기 (/preview) 표시 */
+.preview-badge { position: fixed; right: 16px; bottom: 16px; z-index: 10000; padding: 8px 14px; background: #111; color: #fff; font: 500 12px/1.4 var(--futura); letter-spacing: 0.3px; pointer-events: none; }

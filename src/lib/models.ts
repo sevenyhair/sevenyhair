@@ -79,6 +79,14 @@ export const TestimonialModel = model("Testimonial", TestimonialSchema, COLLECTI
 export const StaffModel = model("Staff", StaffSchema, COLLECTIONS.staff);
 export const PostModel = model("Post", PostSchema, COLLECTIONS.posts);
 
+/** 공통 블록 — kind 별 한 문서 (values · cta) */
+const BlockSchema = new Schema({ kind: { type: String, required: true, unique: true } }, opts);
+export const BlockModel = model("Block", BlockSchema, COLLECTIONS.blocks);
+
+/** 미리보기 초안 — expireAt 이 지나면 Mongo TTL 이 지운다 */
+const DraftSchema = new Schema({ expireAt: { type: Date, index: { expires: 0 } } }, opts);
+export const DraftModel = model("Draft", DraftSchema, COLLECTIONS.drafts);
+
 /** 인스타그램 게시물 — 코드만 저장. source: manual(npm run ig 로 직접 등록) | seed */
 const InstagramSchema = new Schema(
   {

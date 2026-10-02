@@ -5,8 +5,11 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { igPermalink } from "@/content/instagram";
 import type { Style } from "@/content/styles";
+import { BLOCKS } from "@/content/blocks";
 import {
+  BlockModel,
   CustomPageModel,
+  DraftModel,
   InstagramModel,
   MediaModel,
   PageModel,
@@ -20,7 +23,7 @@ import {
 import { connectDB } from "../mongodb";
 import { deleteObject, putObject, readR2Config } from "../r2";
 import { sanitizeRichHtml } from "../sanitize";
-import type { CustomPage, MediaItem, Page, SeoOverride, Service, Shop, Staff, Testimonial } from "../types";
+import type { CustomPage, MediaItem, Page, Section, SeoOverride, Service, SharedBlocks, Shop, Staff, Testimonial } from "../types";
 import { requireAdmin } from "./guard";
 import { ADMIN_COOKIE, createSessionToken, passwordMatches, SESSION_DAYS } from "./session";
 
@@ -97,6 +100,48 @@ export async function savePage(page: Page) {
   return run(`savePage(${page.slug})`, async () => {
     if (!page.slug) throw new Error("페이지 slug 가 없습니다.");
     await PageModel.replaceOne({ slug: page.slug }, strip(page), { upsert: true });
+  });
+}
+
+/* ───────── 페이지 블록 ───────── */
+
+/**
+ * 블록 목록 검사. 섹션은 통째로 저장한다 — 필드를 골라 담으면 새로 추가한 필드가 저장 때 조용히 사라진다.
+ */
+function checkSections(sections: Section[]): Section[] {
+  if (!Array.isArray(sections)) throw new Error("블록 목록이 올바르지 않습니다.");
+  const seen = new Set<string>();
+  return sections.map((s) => {
+    if (!s?.key || !(s.kind in BLOCKS)) throw new Error(`알 수 없는 블록입니다: ${s?.kind}`);
+    if (seen.has(s.key)) throw new Error(`블록 이름(key)이 겹칩니다: ${s.key}`);
+    seen.add(s.key);
+    return strip(s);
+  });
+}
+
+/** 페이지(히어로 + 블록 순서·내용) 와 공통 블록(values · cta) 을 한 번에 저장한다 */
+export async function savePageBlocks(input: { page: Page; shared: SharedBlocks }) {
+  return run(`savePageBlocks(${input.page?.slug})`, async () => {
+    const { page, shared } = input;
+    if (!page?.slug) throw new Error("페이지 slug 가 없습니다.");
+    const doc = { ...strip(page), sections: checkSections(page.sections), version: 2 };
+    await PageModel.replaceOne({ slug: page.slug }, doc, { upsert: true });
+    for (const kind of ["values", "cta"] as const) {
+      const b = shared?.[kind];
+      if (b) await BlockModel.replaceOne({ kind }, { ...strip(b), key: kind, kind }, { upsert: true });
+    }
+  });
+}
+
+/** 저장 전 미리보기 — 초안을 1시간 보관하고 id 를 돌려준다 (/preview/<slug>?d=<id>) */
+export async function createPreview(input: { page: Page; shared: SharedBlocks }) {
+  return run("createPreview", async () => {
+    const doc = await DraftModel.create({
+      page: { ...strip(input.page), sections: checkSections(input.page.sections), version: 2 },
+      shared: input.shared,
+      expireAt: new Date(Date.now() + 60 * 60 * 1000),
+    });
+    return { id: String(doc._id) };
   });
 }
 

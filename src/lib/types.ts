@@ -55,9 +55,31 @@ export type Shop = {
   nav: LinkRef[];
 };
 
+/**
+ * 페이지 블록. 종류 목록·설명은 src/content/blocks.ts.
+ *  - 내용이 블록 안에 있는 것: side-feature · text · image-band · milestones · price-note · gallery
+ *  - 공통 블록(내용은 shared 한 벌, 여러 페이지에 같이 쓰임): values · cta
+ *  - 데이터 블록(내용은 각 목록 데이터, 블록은 놓을 자리만): testimonials · instagram · prices · stylebook · staff
+ */
+export type SectionKind =
+  | "side-feature"
+  | "text"
+  | "image-band"
+  | "milestones"
+  | "price-note"
+  | "gallery"
+  | "values"
+  | "cta"
+  | "testimonials"
+  | "instagram"
+  | "prices"
+  | "stylebook"
+  | "staff";
+
 export type Section = {
   key: string; // 페이지 안에서 유일
-  kind: "side-feature" | "values" | "text" | "gallery" | "cta" | "image-band";
+  kind: SectionKind;
+  hidden?: boolean;
   heading?: string;
   kicker?: string;
   body?: string[];
@@ -65,7 +87,14 @@ export type Section = {
   cta?: LinkRef[];
   items?: { title: string; body: string; image?: ImageRef; link?: LinkRef }[];
   layout?: "media-left" | "media-right";
+  /** instagram: 보여줄 개수 */
+  count?: number;
+  /** instagram: 아래 "팔로우하기" 버튼 */
+  follow?: boolean;
 };
+
+/** 여러 페이지가 같이 쓰는 블록 내용 (blocks 컬렉션, kind 별 한 문서) */
+export type SharedBlocks = { values: Section; cta: Section };
 
 export type Page = {
   slug: string; // "home" | "angebot" | ...
@@ -77,6 +106,8 @@ export type Page = {
     cta?: LinkRef[];
   };
   sections: Section[];
+  /** 2 = 블록 목록 구조 (2026-10-02). 없으면 옛 구조 → queries 가 읽을 때 변환 */
+  version?: number;
 };
 
 /**

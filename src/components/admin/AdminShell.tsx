@@ -1,49 +1,52 @@
 "use client";
 
 import {
+  Armchair,
+  BookOpen,
   ExternalLink,
   FileText,
   Gauge,
+  House,
   Image as ImageIcon,
-  LayoutTemplate,
   LogOut,
+  MapPin,
   Menu,
-  MessageSquareQuote,
   Scissors,
   Search,
-  Sparkles,
   Store,
   UserRound,
-  Globe,
   X,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { logoutAction } from "@/lib/admin/actions";
-import { IconInstagram as Instagram } from "../Icons";
 
 type NavItem = { href: string; label: string; icon: React.ElementType; keywords?: string };
 
+/**
+ * 메뉴는 사이트 페이지 단위다 (2026-10-02). 가격표 · 후기 · 인스타 · 스타일북 · 원장 소개 · SEO 는
+ * 각 페이지 메뉴 안의 블록 · 탭으로 들어갔다. 옛 주소(/admin/services 등)는 해당 블록으로 넘겨 준다.
+ * keywords 는 Ctrl K 빠른 이동 검색어.
+ */
 export const NAV: { group: string; items: NavItem[] }[] = [
-  { group: "", items: [{ href: "/admin", label: "대시보드", icon: Gauge, keywords: "home 홈 상태" }] },
+  { group: "", items: [{ href: "/admin", label: "대시보드", icon: Gauge, keywords: "home 상태" }] },
   {
-    group: "콘텐츠",
+    group: "페이지",
     items: [
-      { href: "/admin/shop", label: "매장 정보", icon: Store, keywords: "주소 전화 영업시간 지도 결제 예약" },
-      { href: "/admin/pages", label: "페이지 문구", icon: LayoutTemplate, keywords: "홈 히어로 섹션 이미지 문구 텍스트" },
-      { href: "/admin/services", label: "시술 · 가격", icon: Scissors, keywords: "가격표 커트 펌 염색 클리닉" },
-      { href: "/admin/styles", label: "스타일북", icon: Sparkles, keywords: "스타일 사진 포트폴리오" },
-      { href: "/admin/instagram", label: "인스타그램", icon: Instagram, keywords: "피드 릴스 저널 journal" },
-      { href: "/admin/reviews", label: "후기", icon: MessageSquareQuote, keywords: "리뷰 testimonials" },
-      { href: "/admin/staff", label: "원장 소개", icon: UserRound, keywords: "about 디자이너 소개 이력" },
+      { href: "/admin/pages/home", label: "홈", icon: House, keywords: "home 히어로 후기 리뷰 인스타 아이콘 예약유도 seo" },
+      { href: "/admin/pages/services", label: "Services", icon: Scissors, keywords: "시술 가격 가격표 커트 펌 염색 클리닉 스타일북 seo" },
+      { href: "/admin/pages/salon", label: "The Salon", icon: Armchair, keywords: "살롱 소개 갤러리 사진 런던 seo" },
+      { href: "/admin/pages/about", label: "About", icon: UserRound, keywords: "원장 소개 디자이너 연혁 이력 seo" },
+      { href: "/admin/pages/journal", label: "Journal", icon: BookOpen, keywords: "인스타그램 instagram 피드 릴스 게시물 seo" },
+      { href: "/admin/pages/contact", label: "Contact", icon: MapPin, keywords: "오시는 길 영업시간 사진 seo" },
     ],
   },
   {
-    group: "사이트",
+    group: "공통",
     items: [
+      { href: "/admin/shop", label: "매장 정보", icon: Store, keywords: "주소 전화 영업시간 휴무 지도 결제 예약 푸터" },
       { href: "/admin/custom", label: "커스텀 페이지", icon: FileText, keywords: "새 페이지 html 에디터 공지 이벤트" },
-      { href: "/admin/seo", label: "SEO · 공유", icon: Globe, keywords: "검색 제목 설명 og 카카오 공유 이미지" },
       { href: "/admin/media", label: "미디어", icon: ImageIcon, keywords: "이미지 업로드 사진 r2 라이브러리" },
     ],
   },

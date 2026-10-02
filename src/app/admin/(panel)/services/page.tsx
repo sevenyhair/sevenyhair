@@ -1,9 +1,6 @@
-import type { Metadata } from "next";
-import ServicesEditor from "@/components/admin/editors/ServicesEditor";
-import { getServices } from "@/lib/queries";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = { title: "시술 · 가격" };
-
-export default async function ServicesAdminPage() {
-  return <ServicesEditor initial={await getServices()} />;
+/** 옛 메뉴 주소 — 시술 · 가격 → Services 페이지의 가격표 블록 (2026-10-02 페이지별 메뉴로 묶음) */
+export default function Page() {
+  redirect("/admin/pages/services?open=price-table");
 }

@@ -1,9 +1,6 @@
-import type { Metadata } from "next";
-import ReviewsEditor from "@/components/admin/editors/ReviewsEditor";
-import { getTestimonials } from "@/lib/queries";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = { title: "후기" };
-
-export default async function ReviewsAdminPage() {
-  return <ReviewsEditor initial={await getTestimonials()} />;
+/** 옛 메뉴 주소 — 후기 → 홈 페이지의 후기 블록 (2026-10-02 페이지별 메뉴로 묶음) */
+export default function Page() {
+  redirect("/admin/pages/home?open=testimonials");
 }

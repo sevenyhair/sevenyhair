@@ -3,6 +3,14 @@
 import { Check, Loader2, X } from "lucide-react";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 
+/* ───────── 끼움 모드 ───────── */
+
+/**
+ * 편집 화면(가격표·후기 등)을 페이지 블록 안에 끼워 쓸 때 켠다.
+ * PageHeader 는 숨고, SaveBar 는 화면 아래 고정 대신 블록 안 저장 줄로 바뀐다.
+ */
+export const EmbedCtx = createContext<{ saveLabel: string } | null>(null);
+
 /* ───────── 기본 부품 ───────── */
 
 type BtnProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -111,6 +119,8 @@ export function Badge({ tone = "zinc", children }: { tone?: "zinc" | "green" | "
 }
 
 export function PageHeader({ title, description, actions }: { title: string; description?: React.ReactNode; actions?: React.ReactNode }) {
+  const embed = useContext(EmbedCtx);
+  if (embed) return actions ? <div className="mb-4 flex justify-end gap-2">{actions}</div> : null;
   return (
     <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
       <div>
@@ -211,6 +221,25 @@ export function useSaveable<T>(initial: T, save: (value: T) => Promise<SaveResul
 
 /** 화면 아래에 붙는 저장 바 — 바뀐 게 있을 때만 떠오른다 */
 export function SaveBar({ dirty, saving, onSave, onReset }: { dirty: boolean; saving: boolean; onSave: () => void; onReset: () => void }) {
+  const embed = useContext(EmbedCtx);
+  if (embed) {
+    return (
+      <div className={`mt-4 flex items-center justify-between gap-3 rounded-xl px-3 py-2.5 ${dirty ? "bg-amber-50" : "bg-zinc-50"}`}>
+        <span className="flex items-center gap-2 text-[12px] text-zinc-600">
+          <span className={`h-2 w-2 rounded-full ${dirty ? "bg-amber-500" : "bg-emerald-500"}`} />
+          {dirty ? "이 목록에 저장하지 않은 변경이 있습니다" : "저장된 상태"}
+        </span>
+        <div className="flex gap-2">
+          <Button size="sm" variant="ghost" onClick={onReset} disabled={saving || !dirty}>
+            되돌리기
+          </Button>
+          <Button size="sm" variant="primary" onClick={onSave} loading={saving} disabled={!dirty}>
+            {embed.saveLabel}
+          </Button>
+        </div>
+      </div>
+    );
+  }
   return (
     <div
       className={`fixed inset-x-0 bottom-0 z-40 flex justify-center px-4 pb-4 transition-all duration-200 lg:pl-[260px] ${
