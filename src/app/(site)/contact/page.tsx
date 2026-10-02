@@ -12,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 /**
  * 원본 /kontakt — 왼쪽 연락처·영업시간, 오른쪽 50vw × 100vh 사진.
- * 아래에 네이버 지도(Location)와 푸터를 붙였다 (원본엔 없던 섹션).
+ * 매장 이름 아래·주소 위에 작은 네이버 지도를 넣었다 (원본엔 없음). 아래에 푸터.
  */
 export default async function ContactPage() {
   const [shop, page] = await Promise.all([getShop(), getPage("contact")]);
@@ -27,6 +27,11 @@ export default async function ContactPage() {
           <h1 className="heading kontakt">
             {shop.name} {shop.nameSuffix}
           </h1>
+          {map && (
+            <div className="contact-map">
+              <NaverMap lat={map.lat} lng={map.lng} zoom={map.zoom} title="SEVENY HAIR" placeUrl={LINKS.map} height={220} />
+            </div>
+          )}
           <div className="contact-row">
             <IconHome />
             <a className="contact-text" href={LINKS.map} target="_blank" rel="noreferrer">
@@ -76,29 +81,6 @@ export default async function ContactPage() {
       </div>
     </div>
 
-    {/* ───── 네이버 지도 ───── */}
-    <section className="section map-section">
-      <div className="wrapper">
-        <div className="map-head" data-reveal="up">
-          <h2 className="heading">Location</h2>
-          <div className="map-info">
-            <p className="paragraph">
-              {shop.address.street}
-              <br />
-              {shop.address.zip}
-            </p>
-            <p className="paragraph map-transit">
-              4호선 충렬사역 3번 출구 도보 6분 · 충렬사역·서원시장 버스정류장 도보 5분
-              <br />
-              전용 주차장이 없습니다. 대중교통 이용을 권해 드립니다.
-            </p>
-          </div>
-        </div>
-        {map && (
-          <NaverMap lat={map.lat} lng={map.lng} zoom={map.zoom} title="SEVENY HAIR" placeUrl={LINKS.map} />
-        )}
-      </div>
-    </section>
     <SiteFooter shop={shop} />
     </>
   );
