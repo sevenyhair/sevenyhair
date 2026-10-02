@@ -485,7 +485,8 @@
 .contact-map { width: 100%; margin-bottom: 20px; }
 .naver-map { position: relative; }
 .naver-map-canvas { width: 100%; background: #eee; filter: grayscale(0.35) contrast(1.02); }
-.naver-map-link { position: absolute; left: 10px; bottom: 10px; z-index: 2; background: #fff; }
+/* 작은 칩 — 왼쪽 위 (왼쪽 아래는 NAVER 로고 자리라 가리면 안 된다) */
+.naver-map-link.button { position: absolute; left: 8px; top: 8px; z-index: 2; background: #fff; padding: 5px 10px; font-size: 11px; letter-spacing: 0.3px; line-height: 1.4; border-width: 1px; white-space: nowrap; height: auto; }
 .naver-map[data-status="failed"] .naver-map-link { position: static; display: inline-block; }
 
 /* 커스텀 페이지 (/p/[slug]) — 어드민 에디터 본문을 사이트 서체로 */
