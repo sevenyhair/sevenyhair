@@ -18,8 +18,9 @@ type Props = {
   title?: string;
 };
 
-// 대각선 띠: S 왼쪽 위 → E 오른쪽 위 → N 왼쪽 아래
-const BAND = { x1: 13, y1: 4, x2: 74, y2: 112, width: 4 };
+// 대각선 띠: S 왼쪽 위 → N 왼쪽 아래. N 의 굵은 대각선과 방향이 비슷해서, 끝점을 오른쪽(74)에 두면
+// 그 획이 통째로 지워진다 → 62 로 두어 N 의 왼쪽 아래만 살짝 자른다 (2026-10-02)
+const BAND = { x1: 13, y1: 4, x2: 62, y2: 112, width: 4 };
 
 export default function Logo({ variant = "mark", className, title = "SEVENY" }: Props) {
   const hero = variant === "hero";
