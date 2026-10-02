@@ -1,7 +1,7 @@
 import Preloader from "@/components/Preloader";
 import ScrollEffects from "@/components/ScrollEffects";
 import SiteNav from "@/components/SiteNav";
-import { LINKS } from "@/content/defaults";
+import { BUSINESS, LINKS } from "@/content/defaults";
 import { PHOTOS } from "@/content/photos";
 import { ROUTES, siteUrl } from "@/content/seo";
 import { getShop } from "@/lib/queries";
@@ -32,6 +32,7 @@ function salonJsonLd(shop: Shop) {
     description: ROUTES.home.description,
     telephone: `+82-${shop.phone.replace(/^0/, "")}`,
     priceRange: "₩18,000 – ₩140,000",
+    taxID: BUSINESS.bizNo,
     address: {
       "@type": "PostalAddress",
       streetAddress: shop.address.street,

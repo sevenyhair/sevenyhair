@@ -5,7 +5,7 @@ import { getShop } from "@/lib/queries";
 
 export const metadata: Metadata = { title: "사업자 정보", alternates: { canonical: "/imprint" } };
 
-/** 푸터 "사업자 정보" 링크 대상. 디자이너 실명은 이 페이지에만 쓴다. 사업자등록번호는 고객 확인 후 채운다. */
+/** 푸터 "사업자 정보" 링크 대상. 디자이너 실명은 이 페이지에만 쓴다. */
 export default async function ImprintPage() {
   const shop = await getShop();
   return (
@@ -25,7 +25,7 @@ export default async function ImprintPage() {
             <div className="oeffnung-links">전화</div>
             <div className="oeffnung">{shop.phone}</div>
             <div className="oeffnung-links">사업자등록번호</div>
-            <div className="oeffnung">추후 등록 예정</div>
+            <div className="oeffnung">{BUSINESS.bizNo}</div>
           </div>
         </div>
       </div>

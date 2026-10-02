@@ -2,7 +2,7 @@
 
 import { RefreshCw } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { RouteSeo } from "@/content/seo";
 import { saveSeo } from "@/lib/admin/actions";
 import type { SeoOverride } from "@/lib/types";
@@ -33,7 +33,13 @@ export default function SeoEditor({ route, keys, defaults, initial, site }: {
 
   const title = o.title || defaults.title;
   const desc = o.description || defaults.description;
-  const ogPath = `${defaults.path === "/" ? "" : defaults.path}/opengraph-image?v=${ogVer}`;
+  // 입력 중인 문구로 미리보기를 그린다 (0.6초 쉬면 갱신)
+  const ogQuery = new URLSearchParams({ key: route, title: o.ogTitle ?? "", subtitle: o.ogSubtitle ?? "", image: o.ogImage ?? "" }).toString();
+  const [ogSrc, setOgSrc] = useState(`/api/admin/og?${ogQuery}`);
+  useEffect(() => {
+    const t = setTimeout(() => setOgSrc(`/api/admin/og?${ogQuery}&v=${ogVer}`), 600);
+    return () => clearTimeout(t);
+  }, [ogQuery, ogVer]);
 
   return (
     <>
@@ -88,13 +94,13 @@ export default function SeoEditor({ route, keys, defaults, initial, site }: {
           </div>
           <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white">
             <div className="flex items-center justify-between px-4 pt-3">
-              <p className="text-[12px] font-medium text-zinc-500">공유 이미지 (저장된 값)</p>
+              <p className="text-[12px] font-medium text-zinc-500">공유 이미지 미리보기</p>
               <Button size="sm" variant="ghost" onClick={() => setOgVer(Date.now())} aria-label="새로고침">
                 <RefreshCw className="h-3.5 w-3.5" />
               </Button>
             </div>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={ogPath} alt="공유 이미지 미리보기" className="mt-3 aspect-[1200/630] w-full bg-zinc-100 object-cover" />
+            <img key={ogSrc} src={ogSrc} alt="공유 이미지 미리보기" className="mt-3 aspect-[1200/630] w-full bg-zinc-100 object-cover" />
             <p className="px-4 py-3 text-[11px] text-zinc-400">카카오톡은 미리보기를 캐시합니다. 바뀌지 않으면 카카오 공유 디버거에서 초기화하세요.</p>
           </div>
         </div>

@@ -180,4 +180,5 @@ export const BUSINESS = {
   nameKo: "세브니헤어",
   ownerKo: "이현주",
   ownerEn: "Lee Hyeon-ju",
+  bizNo: "294-45-00585", // 사업자등록번호 (2026-10-02 고객 확인)
 };
