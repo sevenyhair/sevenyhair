@@ -49,8 +49,8 @@ export default async function Dashboard() {
   ];
 
   const quick = [
-    { href: "/admin/pages/journal?open=feed", icon: Instagram, title: "인스타 게시물 추가", desc: "링크만 붙여넣으면 Journal 에 올라갑니다" },
-    { href: "/admin/pages/services?open=price-table", icon: Scissors, title: "가격 수정", desc: "커트·펌·염색·클리닉 가격표" },
+    { href: "/admin/instagram", icon: Instagram, title: "인스타 게시물 추가", desc: "링크만 붙여넣으면 Journal 에 올라갑니다" },
+    { href: "/admin/services", icon: Scissors, title: "가격 수정", desc: "커트·펌·염색·클리닉 가격표" },
     { href: "/admin/shop", icon: Store, title: "영업시간 · 휴무", desc: "푸터·Contact 에 함께 반영" },
     { href: "/admin/custom/new", icon: FileText, title: "새 페이지 만들기", desc: "이벤트·공지 페이지를 에디터로" },
   ];

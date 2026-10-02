@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { igPermalink } from "@/content/instagram";
 import type { Style } from "@/content/styles";
 import { BLOCKS } from "@/content/blocks";
+import { shop as defaultShop } from "@/content/defaults";
 import {
   BlockModel,
   CustomPageModel,
@@ -92,7 +93,9 @@ export async function saveShop(shop: Shop) {
       if (!Number.isFinite(lat) || !Number.isFinite(lng)) throw new Error("지도 좌표가 숫자가 아닙니다.");
       clean.map = { lat, lng, zoom: Math.min(21, Math.max(6, Math.round(zoom || 17))) };
     }
-    await ShopModel.replaceOne({ key: "main" }, { key: "main", ...clean }, { upsert: true });
+    // 메뉴 이름(nav)은 각 페이지 메뉴에서 고친다 — 매장 정보 화면이 들고 있던 옛 값으로 덮지 않게 DB 값을 유지
+    const prev = (await ShopModel.findOne({ key: "main" }).lean()) as { nav?: Shop["nav"] } | null;
+    await ShopModel.replaceOne({ key: "main" }, { key: "main", ...clean, nav: prev?.nav ?? clean.nav }, { upsert: true });
   });
 }
 
@@ -119,8 +122,11 @@ function checkSections(sections: Section[]): Section[] {
   });
 }
 
-/** 페이지(히어로 + 블록 순서·내용) 와 공통 블록(values · cta) 을 한 번에 저장한다 */
-export async function savePageBlocks(input: { page: Page; shared: SharedBlocks }) {
+/**
+ * 페이지(히어로 + 블록 순서·내용) · 공통 블록(values · cta) · 이 페이지의 메뉴 이름을 한 번에 저장한다.
+ * 메뉴 이름은 매장 정보 문서의 nav 에서 주소(href)가 같은 항목만 바꾼다.
+ */
+export async function savePageBlocks(input: { page: Page; shared: SharedBlocks; nav?: { href: string; label: string } }) {
   return run(`savePageBlocks(${input.page?.slug})`, async () => {
     const { page, shared } = input;
     if (!page?.slug) throw new Error("페이지 slug 가 없습니다.");
@@ -129,6 +135,13 @@ export async function savePageBlocks(input: { page: Page; shared: SharedBlocks }
     for (const kind of ["values", "cta"] as const) {
       const b = shared?.[kind];
       if (b) await BlockModel.replaceOne({ kind }, { ...strip(b), key: kind, kind }, { upsert: true });
+    }
+    if (input.nav?.href) {
+      const label = str(input.nav.label, 40).trim();
+      if (!label) throw new Error("메뉴 이름을 비울 수 없습니다.");
+      const doc = (await ShopModel.findOne({ key: "main" }).lean()) as { nav?: Shop["nav"] } | null;
+      const nav = (doc?.nav?.length ? doc.nav : defaultShop.nav).map((n) => (n.href === input.nav!.href ? { ...n, label } : n));
+      await ShopModel.updateOne({ key: "main" }, { $set: { nav } }, { upsert: true });
     }
   });
 }

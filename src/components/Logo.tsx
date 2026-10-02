@@ -7,6 +7,8 @@
  * 어두운 사진 위의 흰 로고(hero)에서도 같은 모양이 된다. 테두리는 자르지 않는다.
  *
  * 인라인 SVG 라서 페이지 웹폰트(Bodoni Moda)를 그대로 쓴다. textLength 로 줄 너비를 고정한다.
+ * 글꼴은 이름으로 직접 쓴다 — var(--font-bodoni) 는 사이트 CSS 에만 있어서, 관리자 화면에선 font-family 전체가
+ * 무효가 되고 관리자 글꼴로 그려졌다. 웹폰트 링크는 루트 레이아웃에 있어 양쪽 다 받는다.
  *
  * variant
  *  - "mark" : 내비·로딩용 검정 로고
@@ -16,16 +18,18 @@ type Props = {
   variant?: "mark" | "hero";
   className?: string;
   title?: string;
+  /** 한 화면에 같은 로고가 여러 번 있을 때 mask id 가 겹치지 않게 (숨겨진 쪽 mask 를 참조하면 글자가 안 잘린다) */
+  idSuffix?: string;
 };
 
 // 대각선 띠: S 왼쪽 위 → N 왼쪽 아래. N 의 굵은 대각선과 방향이 비슷해서, 끝점을 오른쪽(74)에 두면
 // 그 획이 통째로 지워진다 → 62 로 두어 N 의 왼쪽 아래만 살짝 자른다 (2026-10-02)
 const BAND = { x1: 13, y1: 4, x2: 62, y2: 112, width: 4 };
 
-export default function Logo({ variant = "mark", className, title = "SEVENY" }: Props) {
+export default function Logo({ variant = "mark", className, title = "SEVENY", idSuffix = "" }: Props) {
   const hero = variant === "hero";
   const color = hero ? "#fff" : "#111";
-  const maskId = hero ? "logo-band-hero" : "logo-band-mark";
+  const maskId = (hero ? "logo-band-hero" : "logo-band-mark") + idSuffix;
   const H = hero ? 134 : 120;
 
   return (
@@ -56,7 +60,7 @@ export default function Logo({ variant = "mark", className, title = "SEVENY" }: 
         mask={`url(#${maskId})`}
         fill={color}
         textAnchor="middle"
-        style={{ fontFamily: "var(--font-bodoni), 'Bodoni Moda', Didot, serif", fontWeight: 400 }}
+        style={{ fontFamily: "'Bodoni Moda', Didot, serif", fontWeight: 400 }}
       >
         <text x="60" y="56" fontSize="48" textLength="86" lengthAdjust="spacingAndGlyphs">
           SEV
@@ -73,7 +77,7 @@ export default function Logo({ variant = "mark", className, title = "SEVENY" }: 
           textAnchor="middle"
           fill={color}
           fontSize="21"
-          style={{ fontFamily: "var(--font-script), 'Pinyon Script', cursive" }}
+          style={{ fontFamily: "'Pinyon Script', cursive" }}
         >
           hair salon
         </text>

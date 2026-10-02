@@ -7,13 +7,17 @@ import {
   FileText,
   Gauge,
   House,
+  Info,
   Image as ImageIcon,
   LogOut,
   MapPin,
   Menu,
+  MessageSquareQuote,
   Scissors,
   Search,
+  Sparkles,
   Store,
+  Tags,
   UserRound,
   X,
 } from "lucide-react";
@@ -21,12 +25,14 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { logoutAction } from "@/lib/admin/actions";
+import { IconInstagram as Instagram } from "../Icons";
+import Logo from "../Logo";
 
 type NavItem = { href: string; label: string; icon: React.ElementType; keywords?: string };
 
 /**
- * 메뉴는 사이트 페이지 단위다 (2026-10-02). 가격표 · 후기 · 인스타 · 스타일북 · 원장 소개 · SEO 는
- * 각 페이지 메뉴 안의 블록 · 탭으로 들어갔다. 옛 주소(/admin/services 등)는 해당 블록으로 넘겨 준다.
+ * 페이지: 사이트 페이지 단위 (메뉴 이름 · 히어로 · 블록 순서 · SEO).
+ * 목록: 블록이 보여주는 데이터 (가격표 · 인스타 · 후기 · 스타일북 · 원장). 목록 연결 블록은 여기로 링크한다.
  * keywords 는 Ctrl K 빠른 이동 검색어.
  */
 export const NAV: { group: string; items: NavItem[] }[] = [
@@ -37,9 +43,19 @@ export const NAV: { group: string; items: NavItem[] }[] = [
       { href: "/admin/pages/home", label: "홈", icon: House, keywords: "home 히어로 후기 리뷰 인스타 아이콘 예약유도 seo" },
       { href: "/admin/pages/services", label: "Services", icon: Scissors, keywords: "시술 가격 가격표 커트 펌 염색 클리닉 스타일북 seo" },
       { href: "/admin/pages/salon", label: "The Salon", icon: Armchair, keywords: "살롱 소개 갤러리 사진 런던 seo" },
-      { href: "/admin/pages/about", label: "About", icon: UserRound, keywords: "원장 소개 디자이너 연혁 이력 seo" },
+      { href: "/admin/pages/about", label: "About", icon: Info, keywords: "원장 소개 디자이너 연혁 이력 seo" },
       { href: "/admin/pages/journal", label: "Journal", icon: BookOpen, keywords: "인스타그램 instagram 피드 릴스 게시물 seo" },
       { href: "/admin/pages/contact", label: "Contact", icon: MapPin, keywords: "오시는 길 영업시간 사진 seo" },
+    ],
+  },
+  {
+    group: "목록",
+    items: [
+      { href: "/admin/services", label: "시술 · 가격", icon: Tags, keywords: "가격표 커트 펌 염색 클리닉" },
+      { href: "/admin/instagram", label: "인스타그램", icon: Instagram, keywords: "피드 릴스 게시물 링크 journal" },
+      { href: "/admin/reviews", label: "후기", icon: MessageSquareQuote, keywords: "리뷰 testimonials 네이버" },
+      { href: "/admin/styles", label: "스타일북", icon: Sparkles, keywords: "스타일 사진 포트폴리오" },
+      { href: "/admin/staff", label: "원장 소개", icon: UserRound, keywords: "디자이너 소개 이력 about" },
     ],
   },
   {
@@ -77,14 +93,11 @@ export default function AdminShell({ children, siteUrl }: { children: React.Reac
 
   const current = ALL.find((i) => isActive(pathname, i.href));
 
-  const sidebar = (
+  // 데스크톱 사이드바와 모바일 서랍에 두 번 그린다 — 로고 mask id 를 나눈다
+  const sidebar = (where: "side" | "drawer") => (
     <nav className="flex h-full flex-col">
       <div className="flex h-16 items-center gap-3 px-5">
-        <span className="flex h-9 w-9 items-center justify-center border-2 border-zinc-900 text-[10px] font-semibold leading-[1.05] tracking-wide">
-          SEV
-          <br />
-          ENY
-        </span>
+        <Logo className="h-10 w-10 shrink-0" idSuffix={`-admin-${where}`} />
         <div className="leading-tight">
           <p className="text-[14px] font-semibold">세브니헤어</p>
           <p className="text-[12px] text-zinc-500">관리자</p>
@@ -147,7 +160,7 @@ export default function AdminShell({ children, siteUrl }: { children: React.Reac
   return (
     <div className="admin-root">
       {/* 데스크톱 사이드바 */}
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[260px] border-r border-zinc-200 bg-[#fbfbfa] lg:block">{sidebar}</aside>
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[260px] border-r border-zinc-200 bg-[#fbfbfa] lg:block">{sidebar("side")}</aside>
 
       {/* 모바일 상단바 + 서랍 */}
       <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-zinc-200 bg-white/90 px-4 backdrop-blur lg:hidden">
@@ -165,7 +178,7 @@ export default function AdminShell({ children, siteUrl }: { children: React.Reac
             <button onClick={() => setDrawer(false)} className="absolute left-[244px] top-4 rounded-lg p-1 text-white" aria-label="메뉴 닫기">
               <X className="h-5 w-5" />
             </button>
-            {sidebar}
+            {sidebar("drawer")}
           </aside>
         </div>
       )}

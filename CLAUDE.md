@@ -30,14 +30,14 @@ npm run ig -- list | add <url> [title] | pin <code> | hide <code> | remove <code
 | `src/content/defaults.ts`, `pages.ts` | 기본 콘텐츠 = 시드 원본. 페이지마다 히어로 + 블록 목록(`sections`), 공통 블록 `sharedBlocks` |
 | `src/content/blocks.ts` | 블록 종류 13개 (이름·설명·그룹·새 블록 기본값) · 사이트 페이지 목록 |
 | `src/components/blocks/` | `SitePage`(페이지별 히어로 + 블록 + 푸터) · `PageBlocks`(블록 렌더러). 공개 6개 라우트와 `/preview` 가 같이 쓴다 |
-| `src/components/admin/blocks/` | 관리자 페이지 메뉴 = 히어로 · 블록(추가·끌어서 순서·숨기기) · 연결 목록 편집 · SEO 탭 |
+| `src/components/admin/blocks/` | 관리자 페이지 메뉴 = 메뉴 이름 · 히어로 · 블록(추가·끌어서 순서·숨기기·접기) · SEO 탭. 목록 연결 블록은 목록 메뉴로 바로가기만 |
 | `src/content/photos.ts`, `styles.ts` | 네이버 플레이스 업체 사진 22장 · 스타일 26개 (링크) |
 | `src/content/instagram.ts` | 인스타 게시물 코드 24개 (초기 피드) |
 | `src/app/api/ig/[code]` | 인스타 이미지 프록시 — CDN 이 CORP same-origin 이라 직접 링크 불가 |
 | `src/components/Logo.tsx` | SEV/ENY/HAIR. 로고 (인라인 SVG, S 가 테두리에 잘림) |
 | `src/lib/queries.ts` | DB 먼저, 실패·빈 값이면 기본 콘텐츠 (실패는 `[db]` 로그) |
 | `src/app/(site)/` | 공개 페이지 (라우트 그룹 — 사이트 CSS·장식은 여기 레이아웃에만) |
-| `src/app/admin/` | 관리자. `(panel)` 은 로그인 후 화면, `login` 은 밖. 메뉴는 페이지별(`pages/[slug]`) + 공통(매장 정보 · 커스텀 페이지 · 미디어). 옛 메뉴 주소는 해당 블록으로 redirect |
+| `src/app/admin/` | 관리자. `(panel)` 은 로그인 후 화면, `login` 은 밖. 메뉴: 페이지(`pages/[slug]` — 메뉴 이름 · 히어로 · 블록 · SEO) / 목록(가격 · 인스타 · 후기 · 스타일북 · 원장) / 공통(매장 정보 · 커스텀 페이지 · 미디어) |
 | `src/middleware.ts` · `src/lib/admin/session.ts` | `/admin` · `/api/admin` 보호. 토큰 = payload(iat·exp) + HMAC (Web Crypto) |
 | `src/lib/admin/actions.ts` | 모든 저장(서버 액션). 시작마다 `requireAdmin()` |
 | `src/lib/r2.ts` · `api/admin/upload/sign` | R2 사전 서명 직접 업로드 (체크섬 WHEN_REQUIRED · 리사이즈 후 크기로 서명) |

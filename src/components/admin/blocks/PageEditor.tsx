@@ -1,31 +1,30 @@
 "use client";
 
-import { ArrowDown, ArrowUp, ChevronDown, ExternalLink, Eye, EyeOff, GripVertical, Link2, MonitorPlay, Plus, Trash2, X } from "lucide-react";
+import { ArrowDown, ArrowUp, ChevronDown, ChevronsUpDown, ExternalLink, Eye, EyeOff, GripVertical, Link2, MonitorPlay, Plus, Trash2, X } from "lucide-react";
 import { useState } from "react";
 import { BLOCKS, GROUP_LABEL, isSharedKind, type BlockGroup } from "@/content/blocks";
 import { createPreview, savePageBlocks } from "@/lib/admin/actions";
 import { newKey } from "@/lib/blocks";
 import type { Page, Section, SectionKind, SharedBlocks } from "@/lib/types";
 import { ImageField } from "../media";
-import { Badge, Button, Card, EmbedCtx, Field, Input, PageHeader, SaveBar, SortableList, Textarea, useSaveable, useToast } from "../ui";
+import { Badge, Button, Card, Field, Input, PageHeader, SaveBar, SortableList, Textarea, useSaveable, useToast } from "../ui";
 import { BlockForm, Links } from "./BlockForms";
 
 /**
  * 페이지 메뉴 하나 (홈 · Services …) — 히어로 + 블록 목록 + SEO.
  *
- * 저장 단위
- *  - 페이지(히어로 · 블록 순서 · 블록 내용) + 공통 블록(아이콘 4열 · 예약 유도) → 아래 고정 저장 바 하나
- *  - 목록 연결 블록의 목록(가격표 · 후기 · 인스타 · 스타일북 · 원장) → 그 블록 안 저장 줄 (모든 페이지에 반영)
+ * 저장: 메뉴 이름 · 히어로 · 블록 순서 · 블록 내용 · 공통 블록(아이콘 4열 · 예약 유도) → 아래 고정 저장 바 하나.
+ * 목록 연결 블록의 목록(가격표 · 후기 · 인스타 · 스타일북 · 원장)은 사이드바 "목록" 메뉴에서 고친다 — 블록엔 바로가기만.
  */
 type DataKind = "testimonials" | "instagram" | "prices" | "stylebook" | "staff";
-type State = { page: Page; shared: SharedBlocks };
+type State = { page: Page; shared: SharedBlocks; nav?: { href: string; label: string } };
 
-const LIST_NAME: Record<DataKind, string> = {
-  testimonials: "후기 목록",
-  instagram: "인스타그램 게시물",
-  prices: "시술 · 가격표",
-  stylebook: "스타일 목록",
-  staff: "원장 소개",
+const LIST: Record<DataKind, { name: string; href: string; unit: string }> = {
+  testimonials: { name: "후기", href: "/admin/reviews", unit: "개" },
+  instagram: { name: "인스타그램", href: "/admin/instagram", unit: "개 게시물" },
+  prices: { name: "시술 · 가격", href: "/admin/services", unit: "개 가격표" },
+  stylebook: { name: "스타일북", href: "/admin/styles", unit: "개 스타일" },
+  staff: { name: "원장 소개", href: "/admin/staff", unit: "명" },
 };
 
 export default function PageEditor({
@@ -34,7 +33,8 @@ export default function PageEditor({
   initial,
   initialShared,
   usage,
-  lists,
+  counts,
+  initialNav,
   seo,
   initialTab,
   initialOpen,
@@ -45,14 +45,16 @@ export default function PageEditor({
   initialShared: SharedBlocks;
   /** 블록 종류 → 그 종류가 놓인 페이지 이름들 (공통 · 목록 블록의 "쓰이는 곳") */
   usage: Record<string, string[]>;
-  /** 목록 연결 블록에 붙일 편집 화면 (서버에서 데이터를 채워 넘긴다) */
-  lists: Record<DataKind, React.ReactNode>;
+  /** 목록 연결 블록 → 목록 항목 수 (바로가기 옆에 보여준다) */
+  counts: Record<DataKind, number>;
+  /** 이 페이지의 메뉴 이름 (홈은 메뉴에 없어서 undefined) */
+  initialNav?: { href: string; label: string };
   seo: React.ReactNode;
   initialTab: "blocks" | "seo";
   initialOpen?: string;
 }) {
   const [tab, setTab] = useState(initialTab);
-  const { value, setValue, dirty, saving, save, reset } = useSaveable<State>({ page: initial, shared: initialShared }, savePageBlocks);
+  const { value, setValue, dirty, saving, save, reset } = useSaveable<State>({ page: initial, shared: initialShared, nav: initialNav }, savePageBlocks);
   const [open, setOpen] = useState<Set<string>>(() => new Set(initialOpen ? [initialOpen] : []));
   const [picker, setPicker] = useState(false);
   const [previewing, setPreviewing] = useState(false);
@@ -66,7 +68,15 @@ export default function PageEditor({
   const patchShared = (kind: "values" | "cta", patch: Partial<Section>) =>
     setValue((v) => ({ ...v, shared: { ...v.shared, [kind]: { ...v.shared[kind], ...patch } } }));
   const setHero = (patch: Partial<Page["hero"]>) => setPage((x) => ({ ...x, hero: { ...x.hero, ...patch } }));
-  const toggle = (key: string) => setOpen((o) => (o.has(key) ? (o.delete(key), new Set(o)) : new Set(o).add(key)));
+  // 기존 Set 을 고치지 않고 새로 만든다 — 업데이트 함수가 두 번 불려도(StrictMode) 결과가 같아야 한다
+  const toggle = (key: string) =>
+    setOpen((o) => {
+      const next = new Set(o);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  const allOpen = value.page.sections.length > 0 && value.page.sections.every((s) => open.has(s.key));
 
   const add = (kind: SectionKind) => {
     const key = newKey(kind, p.sections.map((s) => s.key));
@@ -124,13 +134,26 @@ export default function PageEditor({
 
       {/* 탭은 숨기기만 한다 — 입력 중인 값과 각 저장 바가 그대로 남도록 */}
       <div className={tab === "blocks" ? "space-y-4" : "hidden"}>
+        {value.nav && (
+          <Card title="메뉴 이름" description="왼쪽 메뉴 · 전체화면 메뉴에 보이는 이름입니다. 주소는 고정이에요.">
+            <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
+              <Input value={value.nav.label} onChange={(e) => setValue((v) => ({ ...v, nav: { ...v.nav!, label: e.target.value } }))} />
+              <span className="font-mono text-[12px] text-zinc-400">{value.nav.href}</span>
+            </div>
+          </Card>
+        )}
         <HeroCard slug={p.slug} hero={p.hero} onChange={setHero} />
 
         <div className="flex items-center justify-between pt-2">
           <h2 className="text-[15px] font-semibold">
             블록 <span className="font-normal text-zinc-400">{p.sections.length}</span>
           </h2>
-          <span className="text-[12px] text-zinc-400">위에서부터 그 순서대로 그려집니다 · 끌어서 순서 바꾸기</span>
+          <span className="flex items-center gap-3">
+            <span className="hidden text-[12px] text-zinc-400 sm:inline">위에서부터 그 순서대로 그려집니다 · 끌어서 순서 바꾸기</span>
+            <Button size="sm" variant="ghost" onClick={() => setOpen(allOpen ? new Set() : new Set(p.sections.map((s) => s.key)))}>
+              <ChevronsUpDown className="h-4 w-4" /> {allOpen ? "모두 접기" : "모두 펼치기"}
+            </Button>
+          </span>
         </div>
 
         <SortableList
@@ -195,15 +218,20 @@ export default function PageEditor({
                   <BlockForm section={content} onChange={(patch) => (shared ? patchShared(s.kind as "values" | "cta", patch) : patchSection(s.key, patch))} />
                   {spec.group === "data" && (
                     <div className={s.kind === "prices" || s.kind === "staff" ? "" : "mt-6 border-t border-zinc-100 pt-5"}>
-                      <p className="mb-3 flex items-center gap-1.5 text-[13px] font-semibold">
-                        <Link2 className="h-4 w-4 text-emerald-600" /> {LIST_NAME[s.kind as DataKind]}
-                        <span className="font-normal text-zinc-400">— {others.length ? `${others.join(" · ")} 페이지와 같은 목록` : "모든 페이지 공통 목록"}</span>
-                      </p>
-                      {firstOfKind.get(s.kind) === s.key ? (
-                        <EmbedCtx.Provider value={{ saveLabel: `${LIST_NAME[s.kind as DataKind]} 저장` }}>{lists[s.kind as DataKind]}</EmbedCtx.Provider>
-                      ) : (
-                        <p className="text-[13px] text-zinc-400">같은 목록을 쓰는 블록이 위에 있어서 거기서 편집합니다.</p>
-                      )}
+                      <a
+                        href={LIST[s.kind as DataKind].href}
+                        className="flex items-center justify-between gap-3 rounded-xl border border-emerald-200 bg-emerald-50/60 px-4 py-3 hover:border-emerald-400"
+                      >
+                        <span className="flex items-center gap-2 text-[13px]">
+                          <Link2 className="h-4 w-4 text-emerald-600" />
+                          <span className="font-semibold">{LIST[s.kind as DataKind].name}</span>
+                          <span className="text-zinc-500">
+                            {counts[s.kind as DataKind]}
+                            {LIST[s.kind as DataKind].unit} · {others.length ? `${others.join(" · ")} 페이지와 같은 목록` : "모든 페이지 공통 목록"}
+                          </span>
+                        </span>
+                        <span className="shrink-0 text-[13px] font-medium text-emerald-700">목록 편집 →</span>
+                      </a>
                     </div>
                   )}
                 </div>

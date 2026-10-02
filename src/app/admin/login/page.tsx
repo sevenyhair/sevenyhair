@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import LoginForm from "@/components/admin/LoginForm";
+import Logo from "@/components/Logo";
 import { isAdmin } from "@/lib/admin/guard";
 import { adminConfigIssues } from "@/lib/admin/session";
 
@@ -15,11 +16,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
     <div className="admin-root flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="mb-8 flex flex-col items-center gap-3 text-center">
-          <span className="flex h-14 w-14 items-center justify-center border-2 border-zinc-900 font-serif text-[15px] leading-[1.05] tracking-wide">
-            SEV
-            <br />
-            ENY
-          </span>
+          <Logo className="h-16 w-16" />
           <div>
             <h1 className="text-[20px] font-semibold">세브니헤어 관리자</h1>
             <p className="mt-1 text-[13px] text-zinc-500">사이트 문구·사진·가격을 여기서 바꿉니다</p>

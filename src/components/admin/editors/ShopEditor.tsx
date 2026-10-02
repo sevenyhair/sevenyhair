@@ -165,16 +165,6 @@ export default function ShopEditor({ initial }: { initial: Shop }) {
             </div>
           </div>
         </Card>
-
-        <Card title="메뉴 이름" description="주소는 고정이고 보이는 이름만 바뀝니다.">
-          <div className="grid gap-3 sm:grid-cols-2">
-            {s.nav.map((n, i) => (
-              <Field key={n.href} label={n.href}>
-                <Input value={n.label} onChange={(e) => set("nav", s.nav.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)))} />
-              </Field>
-            ))}
-          </div>
-        </Card>
       </div>
       <SaveBar dirty={dirty} saving={saving} onSave={save} onReset={reset} />
     </>
